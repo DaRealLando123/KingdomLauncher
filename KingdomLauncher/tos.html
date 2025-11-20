@@ -1,0 +1,104 @@
+<!-- tos.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Terms of Service</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #1e1e1e;
+      color: white;
+      overflow: hidden;
+    }
+
+    .tos-box {
+      width: 80%;
+      max-height: 70%;
+      overflow-y: auto;
+      background: #2b2b2b;
+      padding: 20px;
+      border-radius: 12px;
+      transform: translateY(100%);
+      animation: slideUp 0.8s ease forwards;
+    }
+
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .accept {
+      background: #4caf50;
+      color: white;
+    }
+
+    .accept:hover {
+      background: #45a049;
+    }
+
+    .decline {
+      background: #f44336;
+      color: white;
+    }
+
+    .decline:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="tos-box">
+    <h2>Terms of Service - LaunchDays</h2>
+    <p>
+      <i>A DaysFM Launcher</i><br>Before continuing, you <b>MUST</b> agree to the terms:
+    </p>
+    <ul>
+      <li>You have a legal copy of <i>Kingdom Hearts 2</i> dumped from your own PlayStation® 2.</li>
+      <li>You have a legal BIOS dumped from your own PlayStation® 2.</li>
+      <li>This tool is provided "as-is".</li>
+    </ul>
+
+    <h4>This program does NOT upload, host, or otherwise contain ANY files. By using this program, YOU TAKE FULL RESPONSIBILITY for EVERY FILE DOWNLOADED which is from UNRELATED, UNASSOCIATED 3RD PARTY SITES.</h1>
+
+    <div class="buttons">
+      <button class="accept" onclick="accept()">Accept</button>
+      <button class="decline" onclick="decline()">Decline</button>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require("electron");
+
+    function accept() {
+      ipcRenderer.send("tos-accepted");
+    }
+
+    function decline() {
+      ipcRenderer.send("tos-declined");
+    }
+  </script>
+</body>
+</html>

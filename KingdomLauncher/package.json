@@ -1,0 +1,19 @@
+{
+  "name": "KHDaysLauncher",
+  "productName": "KHDaysLauncher",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "Lando",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "node-7z": "3.0.0",
+    "7zip-bin": "5.2.0"
+  },
+  "devDependencies": {
+    "electron": "37.2.5"
+  }
+}

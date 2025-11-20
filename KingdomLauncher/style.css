@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+#version-container {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+}
+
+#center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+#action-button {
+  font-size: 24px;
+  padding: 10px 30px;
+  border-radius: 8px;
+}
+
+#status {
+  margin-top: 10px;
+  color: white;
+}

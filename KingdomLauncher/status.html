@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Status</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+}
+</style>
+</head>
+<body>
+<h2 id="status"></h2>
+<script>
+const { ipcRenderer } = require("electron");
+ipcRenderer.on("status-message", (event, message) => {
+document.getElementById("status").textContent = message;
+});
+</script>
+</body>
+</html>
