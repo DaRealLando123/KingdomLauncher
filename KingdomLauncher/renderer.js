@@ -79,7 +79,7 @@ installButton.addEventListener('click', async () => {
     // Strategy: Ensure 'workIsoPath' exists before we start downloading patches.
     
     // 2. Check if we have a main ISO (might be clean, might be patched, we assume clean if no backup exists)
-    else if (fs.existsSync(finalIsoPath)) {
+    if (fs.existsSync(finalIsoPath)) {
         console.log("Found ISO. Moving to workspace...");
         fs.renameSync(finalIsoPath, workIsoPath);
     }

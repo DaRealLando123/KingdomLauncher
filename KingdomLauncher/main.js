@@ -25,7 +25,7 @@ function createMainWindow() {
 function createTOSWindow() {
   tosWindow = new BrowserWindow({
     width: 500,
-    height: 555,
+    height: 580,
     frame: false, // clean look
     resizable: false,
     alwaysOnTop: true,

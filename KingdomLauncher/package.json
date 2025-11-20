@@ -1,6 +1,6 @@
 {
-  "name": "KHDaysLauncher",
-  "productName": "KHDaysLauncher",
+  "name": "KingdomLauncher",
+  "productName": "KingdomLauncher",
   "description": "My Electron application description",
   "keywords": [],
   "main": "./main.js",
