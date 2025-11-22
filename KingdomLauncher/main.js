@@ -78,14 +78,14 @@ ipcMain.handle('select-iso', async () => {
   }
 });
 
-ipcMain.handle('confirm-dialog', async (event, message) => {
+ipcMain.handle('confirm-dialog', async (event, message, detail) => {
   const result = await dialog.showMessageBox({
     type: 'question',
     buttons: ['Yes', 'No'], // Index 0 = Yes, Index 1 = No
     defaultId: 0,
     title: 'Confirmation',
     message: message,
-    detail: 'A clean ISO file is required to proceed.'
+    detail: detail
   });
 
   // Returns true if "Yes" (index 0) was clicked, false otherwise

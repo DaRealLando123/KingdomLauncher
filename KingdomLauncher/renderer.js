@@ -108,7 +108,7 @@ installButton.addEventListener('click', async () => {
     }
     else {
         const userReady = await ipcRenderer.invoke('confirm-dialog', 
-            "DaysFM requires a clean KH2FM ISO. Do you have one ready to select?"
+            "Kingdom Launcher requires a clean Kingdom Hearts II - Final Mix+ (Japan) ISO. Do you have one ready to select?", "A clean ISO file is required to proceed."
         );
         if (!userReady) { resetUI("Failed to locate ISO."); return; }
         status.textContent = "Waiting for ISO...";
@@ -126,7 +126,7 @@ installButton.addEventListener('click', async () => {
     }
 
     // B. DOWNLOAD MAIN PATCH
-    if (version === "0.034") archiveUrl = "https://github.com/DaRealLando123/DaysFM/releases/download/Alpha/v0.034.Alpha.7z";
+    archiveUrl = `https://github.com/DaRealLando123/DaysFM/releases/download/Alpha/v${version}.Alpha.7z`;
 
     const zipPath = path.join(workDir, 'patch_archive.zip');
 
