@@ -3,38 +3,54 @@ const path = require('path');
 const https = require('https');
 const child_process = require('child_process');
 const { ipcRenderer } = require('electron');
-
 const sevenBin = require('7zip-bin');
 const { extractFull } = require('node-7z');
 
 // --- CONFIGURATION ---
-const TOOLKIT_URL = "https://github.com/DaRealLando123/DaysFM/releases/download/Tools/KH2FM.Toolkit.exe"; 
-const ENGLISH_PATCH_URL = "https://github.com/DaRealLando123/DaysFM/releases/download/Tools/English.Patch.kh2patch";
+const WORKER_BASE_URL = "https://kingdomlauncher.wikinothow.workers.dev";
+const TOOLKIT_URL = "https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/KH2FM.Toolkit.exe"; 
+const ENGLISH_PATCH_URL = "https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch";
+const PCSX2_URL = "https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.1.6.0.7z"; 
 
-// REPLACE THIS with a direct download link to a portable PCSX2 .7z or .zip
-const PCSX2_URL = "https://github.com/DaRealLando123/DaysFM/releases/download/Tools/PCSX2.1.6.0.7z"; 
+// --- GLOBAL STATE ---
+let globalDiscordToken = null; 
+const gameDir = path.join(__dirname, 'downloads');
 
+// --- DOM ELEMENTS ---
 const playButton = document.getElementById('playButton');
 const installButton = document.getElementById('installButton');
+const authButton = document.getElementById('authButton');
 const status = document.getElementById('status');
 const versionContainer = document.getElementById('versionContainer');
 const versionSelect = document.getElementById('versionSelect');
+const overlay = document.getElementById('overlay');
+const closeButton = document.getElementById('overlayClose');
+const discordButton = document.getElementById('discordAuthButton');
 
-const gameDir = path.join(__dirname, 'downloads');
+// --- INITIAL STATE ---
+versionContainer.style.display = 'none';
+installButton.style.display = 'none';
+playButton.style.display = 'none';
+// authButton visibility is handled by tryAutoLogin
 
 // --- 1. GAME CHECKER ---
 function checkGame() {
     const version = versionSelect.value;
+    // If no version is selected (e.g. before login), do nothing
+    if (!version) return;
+
     const gamePath = path.join(gameDir, version, 'KH2FM.iso'); 
     const emuPath = path.join(gameDir, version, 'PCSX2', 'pcsx2.exe');
 
     let isInstalled = false;
     try {
-        // Check for BOTH the ISO and the Emulator EXE
         if (fs.existsSync(gamePath) && fs.statSync(gamePath).size > 0 && fs.existsSync(emuPath)) {
             isInstalled = true;
         }
     } catch (err) { }
+
+    // Ensure we hide the auth button if we are checking the game (implies logged in)
+    authButton.style.display = 'none'; 
 
     if (isInstalled) {
         status.textContent = `DaysFM installed (v${version})`;
@@ -48,31 +64,21 @@ function checkGame() {
 }
 versionSelect.addEventListener('change', checkGame);
 
-// --- 2. PLAY LOGIC (LAUNCH PCSX2) ---
+// --- 2. PLAY LOGIC ---
 playButton.addEventListener('click', () => {
     const version = versionSelect.value;
-    
-    // Paths
     const isoPath = path.join(gameDir, version, 'KH2FM.iso');
     const emuDir = path.join(gameDir, version, 'PCSX2');
-    const emuExe = path.join(emuDir, 'pcsx2.exe'); // Ensure your zip contains this specific filename
+    const emuExe = path.join(emuDir, 'pcsx2.exe');
 
     console.log("Launching Emulator:", emuExe);
-    console.log("Loading ISO:", isoPath);
     
-    status.textContent = "Sending run command- Have fun!";
+    status.textContent = "Sending run command - Have fun!";
 
-    // Launch Args based on PCSX2 documentation
-    // --fullscreen : Starts in fullscreen
-    // --nogui : Hides the PCSX2 configuration window (seamless experience)
-    const args = [
-        isoPath, 
-        '--fullscreen', 
-        '--nogui'
-    ];
+    const args = [ isoPath, '--fullscreen', '--nogui' ];
 
     const gameProcess = child_process.spawn(emuExe, args, {
-        cwd: emuDir // Important: Run inside the emulator folder so it finds plugins/bios
+        cwd: emuDir 
     });
 
     gameProcess.on('error', (err) => {
@@ -83,14 +89,21 @@ playButton.addEventListener('click', () => {
 
 // --- 3. INSTALL LOGIC ---
 installButton.addEventListener('click', async () => {
-    status.textContent = "Preparing to install...";
-    playButton.style.display = 'none';
-    installButton.style.display = 'none';
-    versionSelect.style.display = 'none';
-    
+    if (!globalDiscordToken) {
+        // Fallback if somehow clicked without token
+        authButton.style.display = 'block';
+        installButton.style.display = 'none';
+        return;
+    }
+
     const version = versionSelect.value;
     
-    // Define Paths
+    status.textContent = `Preparing to install v${version}...`;
+    playButton.style.display = 'none';
+    installButton.style.display = 'none';
+    versionContainer.style.display = 'none';
+    authButton.style.display = 'none';
+    
     const finalDir = path.join(__dirname, 'downloads', version);
     const workDir = path.join(finalDir, 'temp_build'); 
 
@@ -107,13 +120,14 @@ installButton.addEventListener('click', async () => {
         fs.renameSync(finalIsoPath, workIsoPath);
     }
     else {
+        status.textContent = "Asking user for ISO...";
         const userReady = await ipcRenderer.invoke('confirm-dialog', 
-            "Kingdom Launcher requires a clean Kingdom Hearts II - Final Mix+ (Japan) ISO. Do you have one ready to select?", "A clean ISO file is required to proceed."
+            "Kingdom Launcher requires a clean Kingdom Hearts II - Final Mix+ (Japan) ISO.", "A *legally* obtained ISO is required to continue."
         );
-        if (!userReady) { resetUI("Failed to locate ISO."); return; }
-        status.textContent = "Waiting for ISO...";
+        if (!userReady) { resetUI("Cancelled."); return; }
+        
         const userSelectedPath = await ipcRenderer.invoke('select-iso');
-        if (!userSelectedPath) { resetUI("Failed to locate ISO."); return; }
+        if (!userSelectedPath) { resetUI("Cancelled."); return; }
 
         status.textContent = "Preparing... (This may freeze for a minute.)";
         await new Promise(r => setTimeout(r, 100)); 
@@ -125,25 +139,24 @@ installButton.addEventListener('click', async () => {
         }
     }
 
-    // B. DOWNLOAD MAIN PATCH
-    archiveUrl = `https://github.com/DaRealLando123/DaysFM/releases/download/Alpha/v${version}.Alpha.7z`;
-
+    // B. DOWNLOAD MAIN PATCH (Secure Worker URL)
+    const archiveUrl = `${WORKER_BASE_URL}/download?token=${globalDiscordToken}&version=${version}`;
     const zipPath = path.join(workDir, 'patch_archive.zip');
 
-    status.textContent = `Starting DaysFM download...`;
+    status.textContent = `Requesting DaysFM v${version} from server...`;
 
     downloadFile(archiveUrl, zipPath, (percent) => {
         status.textContent = `Downloading DaysFM v${version}: ${percent}%`;
     })
     .then(async () => {
-        status.textContent = `Starting DaysFM extraction...`;
+        status.textContent = `Starting DaysFM v${version} extraction...`;
         await extractZip(zipPath, workDir, (percent) => {
             status.textContent = `Extracting DaysFM v${version}: ${percent}%`;
         });
     })
     .then(async () => {
         // C. DOWNLOAD ENGLISH PATCH
-        status.textContent = `Starting Patch download...`;
+        status.textContent = `Starting Patches download...`;
 
         const englishPatchDest = path.join(workDir, "English.kh2patch");
         await downloadFile(ENGLISH_PATCH_URL, englishPatchDest, (percent) => {
@@ -169,25 +182,24 @@ installButton.addEventListener('click', async () => {
         return runToolkit(toolkitPath, patchFiles);
     })
     .then(async () => {
-        // F. DOWNLOAD PCSX2 (NEW STEP)
-
-        status.textContent = `Starting download...`;
-
+        // F. DOWNLOAD PCSX2
         const pcsx2Archive = path.join(finalDir, "pcsx2_install.7z");
-        const pcsx2Folder = path.join(finalDir, "PCSX2"); // Destination folder
+        const pcsx2Folder = path.join(finalDir, "PCSX2"); 
 
-        status.textContent = "Downloading PCSX2 Emulator...";
+        // Only download if missing
+        if (!fs.existsSync(pcsx2Folder)) {
+            status.textContent = "Starting Emulator Download...";
 
-        await downloadFile(PCSX2_URL, pcsx2Archive, (percent) => {
-            status.textContent = `Downloading PCSX2: ${percent}%`;
-        });
-
-        status.textContent = "Installing Emulator...";
-        // Extract to a 'PCSX2' folder inside the version folder
-        await extractZip(pcsx2Archive, pcsx2Folder);
-        
-        // Cleanup the archive
-        try { fs.unlinkSync(pcsx2Archive); } catch(e) {}
+            await downloadFile(PCSX2_URL, pcsx2Archive, (percent) => {
+                status.textContent = `Downloading PCSX2: ${percent}%`;
+            });
+            
+            status.textContent = "Installing PCSX2...";
+            await extractZip(pcsx2Archive, pcsx2Folder,  (percent) => {
+                status.textContent = `Installing PCSX2: ${percent}%`;
+            });
+            try { fs.unlinkSync(pcsx2Archive); } catch(e) {}
+        }
     })
     .then(async () => {
         // G. FINALIZE ISO
@@ -195,33 +207,61 @@ installButton.addEventListener('click', async () => {
         const newIsoResult = path.join(workDir, 'KH2FM.NEW.ISO');
         
         if (fs.existsSync(newIsoResult)) {
-            
             await fs.promises.rename(newIsoResult, finalIsoPath);
-            
             status.textContent = "Deleting temporary files...";
-            try {
-                fs.rmSync(workDir, { recursive: true, force: true });
-            } catch (e) { console.warn("Temp folder warning:", e); }
-
+            try { fs.rmSync(workDir, { recursive: true, force: true }); } catch (e) { }
         } else {
             throw new Error("Patcher finished, but KH2FM.NEW.ISO was not found.");
         }
 
         checkGame();
-        versionSelect.style.display = 'block';
+        versionContainer.style.display = 'flex'; // Ensure dropdown is visible again
     })
     .catch((err) => {
         resetUI(`Error: ${err.message}`);
     });
 });
 
+// --- 4. AUTH & OVERLAY LOGIC ---
+
+authButton.addEventListener('click', () => {
+    overlay.style.display = 'flex';
+});
+
+overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.style.display = 'none';
+});
+if(closeButton) {
+    closeButton.addEventListener('click', () => overlay.style.display = 'none');
+}
+
+// Discord auth button click
+discordButton.addEventListener('click', async () => {
+    status.textContent = "Authenticating...";
+
+    const authData = await ipcRenderer.invoke('oauth-discord');
+
+    if (!authData || !authData.access_token) {
+        status.textContent = "Authentication cancelled or failed.";
+        return;
+    }
+
+    completeLogin(authData.access_token, authData.versions);
+});
+
+
 // --- HELPERS ---
 
 function resetUI(msg) {
     console.error(msg);
     status.textContent = msg;
-    installButton.style.display = 'block';
-    versionSelect.style.display = 'block';
+    // If logged in, show install button, otherwise show auth button
+    if (globalDiscordToken) {
+        installButton.style.display = 'block';
+        versionContainer.style.display = 'flex';
+    } else {
+        authButton.style.display = 'block';
+    }
 }
 
 function downloadFile(url, savePath, onProgress) {
@@ -235,7 +275,9 @@ function downloadFile(url, savePath, onProgress) {
             if (res.statusCode !== 200) {
                 file.close();
                 fs.unlink(savePath, ()=>{});
-                return reject(new Error(`HTTP ${res.statusCode} at ${url}`));
+                let data = ''; res.on('data', c => data += c);
+                res.on('end', () => reject(new Error(`HTTP ${res.statusCode}: ${data.substring(0, 100)}`)));
+                return;
             }
             const total = parseInt(res.headers['content-length'], 10);
             let cur = 0;
@@ -256,7 +298,6 @@ function downloadFile(url, savePath, onProgress) {
 
 function extractZip(zipPath, targetDir, onProgress) {
     return new Promise((resolve, reject) => {
-        // 7-Zip handles standard zips, 7z, rar, everything.
         const stream = extractFull(zipPath, targetDir, {
             $bin: sevenBin.path7za,
             $progress: true 
@@ -303,4 +344,66 @@ function runToolkit(exePath, patchFileList) {
     });
 }
 
-checkGame();
+async function tryAutoLogin() {
+    const savedToken = localStorage.getItem("discord_token");
+    
+    if (!savedToken) {
+        const oneLiners = [`"There’s no way you’re taking Kairi’s heart!"`,`"Is any of this for real... or not?"`,`"It looks like my summer vacation is... over."`,`"My friends are my power!"`,`"Two?!"`]
+        status.textContent = oneLiners[Math.floor(Math.random() * oneLiners.length)];
+        
+        // IMPORTANT: Ensure Auth Button is visible when not logged in
+        authButton.style.display = 'block'; 
+        return;
+    }
+
+    status.textContent = "Verifying Saved Session...";
+
+    try {
+        const response = await fetch(`${WORKER_BASE_URL}/versions?token=${savedToken}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Auto-login success!");
+            completeLogin(savedToken, data.versions);
+        } else {
+            console.warn("Saved token expired.");
+            localStorage.removeItem("discord_token");
+            status.textContent = "Session expired. Please login again.";
+            authButton.style.display = 'block';
+        }
+    } catch (e) {
+        console.error("Auto-login network error:", e);
+        status.textContent = "Connection failed.";
+        authButton.style.display = 'block';
+    }
+}
+
+function completeLogin(token, versions) {
+    globalDiscordToken = token;
+    localStorage.setItem("discord_token", token);
+
+    if (versions.length === 0) {
+        alert("Login success, but no versions found on GitHub.");
+        return;
+    }
+
+    versionSelect.innerHTML = "";
+    versions.forEach(ver => {
+        const opt = document.createElement("option");
+        opt.value = ver;
+        opt.textContent = `358/2 Days Final Mix | Alpha v${ver}`;
+        versionSelect.appendChild(opt);
+    });
+    versionSelect.value = versions[0];
+
+    // FIXED: Show the container, not just the select element
+    versionContainer.style.display = 'flex'; 
+    
+    authButton.style.display = 'none'; 
+    overlay.style.display = 'none';
+    status.textContent = `${versions.length} versions available.`;
+    
+    checkGame(); 
+}
+
+tryAutoLogin();
