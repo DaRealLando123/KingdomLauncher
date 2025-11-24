@@ -49,7 +49,7 @@ function checkGame() {
         }
     } catch (err) { }
 
-    // Ensure we hide the auth button if we are checking the game (implies logged in)
+    // hide the auth button if checking the game (implies logged in)
     authButton.style.display = 'none'; 
 
     if (isInstalled) {
