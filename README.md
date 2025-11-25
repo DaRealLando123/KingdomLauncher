@@ -1,7 +1,9 @@
 # Kingdom Launcher
 A kingdom hearts mod manager that allows automatic patching, backups, and checks for emulator compatibility so you don't have to!
+
 ![](https://raw.githubusercontent.com/DaRealLando123/KingdomLauncher/refs/heads/main/display1.gif)
-## What can it do?
+
+## Ok... What can it do?
 
 - [x] Mod Integration
 - [x] Automatic Emulator Configuration
