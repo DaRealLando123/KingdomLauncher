@@ -241,8 +241,20 @@ discordButton.addEventListener('click', async () => {
 
     const authData = await ipcRenderer.invoke('oauth-discord');
 
-    if (!authData || !authData.access_token) {
-        status.textContent = "Authentication cancelled or failed.";
+    if (authData && authData.error) {
+        // 1. Close the overlay immediately
+        overlay.style.display = 'none';
+            
+        // 2. Check specific error message
+        if (authData.error.includes('Not')) {
+            status.textContent = "That Discord account does not have access to anything.";
+            return
+        } else {
+            status.textContent = `Login Failed, ${authData.error}`;
+            return
+        }
+            
+        status.textContent = "Login Failed.";
         return;
     }
 
