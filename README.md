@@ -3,7 +3,7 @@ A kingdom hearts mod manager that allows automatic patching, backups, and checks
 
 ![](https://raw.githubusercontent.com/DaRealLando123/KingdomLauncher/refs/heads/main/display1.gif)
 
-## Ok... What can it do?
+## Ok... But what can it do?
 
 - [x] Mod Integration
 - [x] Automatic Emulator Configuration
