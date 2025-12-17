@@ -10,7 +10,7 @@ A Kingdom Hearts II mod manager that allows automatic version seperation, patchi
 - [x] Optimized Mod-Specific Configurations
 - [x] Automated Patching with Toolkit
 - [x] QOL Options (English Patches, Widescreen Patches, FPS Patches)
-- [x] Version locking for patreon/discord authentication 
+- [x] Version locking with patreon/discord authentication 
 
 ## In progress features... probably
 
