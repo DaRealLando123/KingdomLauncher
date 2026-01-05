@@ -1,7 +1,7 @@
 # Kingdom Launcher
 A Kingdom Hearts II manager for the 358/2 Days | Final Mix mod that allows automatic version seperation, patching, backups, and checks for emulator compatibility so you don't have to!
 
-KingdomLauncher v2:
+KingdomLauncher v2 (HoloLauncher):
 
 ![](https://github.com/DaRealLando123/KingdomLauncher/blob/ccd803a21661a22c52da7c22c53110eb4d131fc9/Resources/v2)
 
