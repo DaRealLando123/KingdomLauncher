@@ -2,7 +2,7 @@
 A Kingdom Hearts II mod manager that allows automatic version seperation, patching, backups, and checks for emulator compatibility so you don't have to!
 
 KingdomLauncher v1:
-![](https://raw.githubusercontent.com/DaRealLando123/KingdomLauncher/refs/heads/main/display1.gif)
+![](https://github.com/DaRealLando123/KingdomLauncher/blob/1fd0f06569d60b04ab19fd37d1bb1e02365e26c4/Resources/display1.gif)
 
 ## Ok... But what can it do?
 
