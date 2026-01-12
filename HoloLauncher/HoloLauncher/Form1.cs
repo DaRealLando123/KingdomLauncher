@@ -42,7 +42,7 @@ namespace HoloLauncher {
 
                 var psi = new ProcessStartInfo {
                     FileName = Path.Combine(docFolder, "KingdomLauncher", "PCSX2", "pcsx2.exe"),
-                    Arguments = "KH2FM.NEW.ISO --nogui",
+                    Arguments = "-portable -nogui KH2FM.NEW.ISO",
                     WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher"),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

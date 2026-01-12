@@ -54,6 +54,7 @@ namespace HoloLauncher {
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.BackColor = System.Drawing.Color.Black;
             this.progressBar1.Location = new System.Drawing.Point(8, 197);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(329, 10);
@@ -65,9 +66,9 @@ namespace HoloLauncher {
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox1.Image = global::HoloLauncher.Properties.Resources.Logo;
-            this.pictureBox1.Location = new System.Drawing.Point(8, 6);
+            this.pictureBox1.Location = new System.Drawing.Point(5, 5);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(114, 81);
+            this.pictureBox1.Size = new System.Drawing.Size(125, 92);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
@@ -85,7 +86,7 @@ namespace HoloLauncher {
             this.btn_Uninstall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_Uninstall.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Uninstall.ForeColor = System.Drawing.Color.Transparent;
-            this.btn_Uninstall.Location = new System.Drawing.Point(-5, 121);
+            this.btn_Uninstall.Location = new System.Drawing.Point(-5, 132);
             this.btn_Uninstall.Name = "btn_Uninstall";
             this.btn_Uninstall.Size = new System.Drawing.Size(138, 23);
             this.btn_Uninstall.TabIndex = 4;
@@ -107,7 +108,7 @@ namespace HoloLauncher {
             this.btn_InstallPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_InstallPlay.Font = new System.Drawing.Font("Palatino Linotype", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_InstallPlay.ForeColor = System.Drawing.Color.White;
-            this.btn_InstallPlay.Location = new System.Drawing.Point(-5, 87);
+            this.btn_InstallPlay.Location = new System.Drawing.Point(-5, 98);
             this.btn_InstallPlay.Name = "btn_InstallPlay";
             this.btn_InstallPlay.Size = new System.Drawing.Size(138, 32);
             this.btn_InstallPlay.TabIndex = 0;
@@ -122,7 +123,7 @@ namespace HoloLauncher {
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(150, 9);
+            this.label2.Location = new System.Drawing.Point(150, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(187, 65);
             this.label2.TabIndex = 5;
@@ -138,7 +139,7 @@ namespace HoloLauncher {
             this.btn_dir.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.btn_dir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_dir.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_dir.Location = new System.Drawing.Point(125, 121);
+            this.btn_dir.Location = new System.Drawing.Point(125, 132);
             this.btn_dir.Name = "btn_dir";
             this.btn_dir.Size = new System.Drawing.Size(23, 23);
             this.btn_dir.TabIndex = 6;
