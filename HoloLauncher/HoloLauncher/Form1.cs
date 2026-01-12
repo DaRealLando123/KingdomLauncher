@@ -135,7 +135,7 @@ namespace HoloLauncher {
 
             label1.Text = "Downloading (2/4) PCSX2 Emulator...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.1.6.0.zip", Path.Combine(tempFolder, "PCSX2.zip"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(tempFolder, "PCSX2.zip"), progress);
 
             Task extractTask2 = Task.Run(() =>
             {
