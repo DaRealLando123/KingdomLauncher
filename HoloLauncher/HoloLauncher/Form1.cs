@@ -47,9 +47,9 @@ namespace HoloLauncher {
             if (btn_InstallPlay.Text == "Play") {
 
                 var psi = new ProcessStartInfo {
-                    FileName = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2", "pcsx2.exe"),
+                    FileName = Path.Combine(docFolder, "KingdomLauncher", "PCSX2", "pcsx2.exe"),
                     Arguments = "-portable -batch KH2FM.NEW.ISO",
-                    WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"),
+                    WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher"),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -67,7 +67,7 @@ namespace HoloLauncher {
         }
 
         private void DetectValidInstall() {
-            if (File.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2"))) {
+            if (File.Exists(Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "PCSX2"))) {
                 btn_InstallPlay.Text = "Play";
             } else {
                 btn_InstallPlay.Text = "Install";
@@ -76,7 +76,7 @@ namespace HoloLauncher {
             progressBar1.Visible = false;
             btn_InstallPlay.Enabled = true;
 
-            if (Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"))) {
+            if (Directory.Exists(Path.Combine(docFolder, "KingdomLauncher"))) {
                 btn_Uninstall.Enabled = true;
                 btn_dir.Visible = true;
             } else {
@@ -87,7 +87,7 @@ namespace HoloLauncher {
 
         async private Task InstallProcess() {
 
-            var newIsoPath = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "KH2FM.NEW.ISO");
+            var newIsoPath = Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO");
             if (File.Exists(newIsoPath)) {
                 File.Delete(newIsoPath);
             }
@@ -119,7 +119,7 @@ namespace HoloLauncher {
 
             CreateDirectories();
 
-            string tempFolder = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1");
+            string tempFolder = Path.Combine(docFolder, "KingdomLauncher");
 
             label1.Text = "Copying ISO... (this is slow)";
 
@@ -156,7 +156,7 @@ namespace HoloLauncher {
             Task extractTask2 = Task.Run(() =>
             {
                 string zipPath = Path.Combine(tempFolder, "PCSX2.zip");
-                string extractPath = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2");
+                string extractPath = Path.Combine(docFolder, "KingdomLauncher", "PCSX2");
 
                 // Delete the folder if it exists to emulate 'overwrite'
                 if (Directory.Exists(extractPath)) {
@@ -174,7 +174,7 @@ namespace HoloLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Extracting DaysFM... (this is slow)";
+            label1.Text = "Finishing up... (this takes time!!!)";
 
             await extractTask1;
             await extractTask2;
@@ -223,7 +223,7 @@ namespace HoloLauncher {
         }
 
         private void CreateDirectories() {
-            Directory.CreateDirectory(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"));
+            Directory.CreateDirectory(Path.Combine(docFolder, "KingdomLauncher"));
         }
 
         private async Task DownloadFromURL(string url, string destination, IProgress<int> progress) {
@@ -269,14 +269,14 @@ namespace HoloLauncher {
 
         private void btn_Uninstall_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Are you sure you want to uninstall DaysFM?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
-            Directory.Delete(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"), true);
+            Directory.Delete(Path.Combine(docFolder, "KingdomLauncher"), true);
             DetectValidInstall();
 
         }
 
         private void btn_dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"));
+            Process.Start("explorer.exe", Path.Combine(docFolder, "KingdomLauncher"));
         }
     }
 }
