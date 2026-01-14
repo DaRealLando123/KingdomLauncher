@@ -1,5 +1,9 @@
 ### _"And out of all those colors, red is the one that travels the farthest."_
 ![](https://github.com/DaRealLando123/KingdomLauncher/blob/979e02040acc0b23bff3a7566b54451a0709195f/Resources/logo.png)
+#### 358/2 Days • Final Mix created by O’Shinobi ツ
+
+# KingdomLauncher / HoloLauncher created by DaRealLando123
+
 A Kingdom Hearts II manager for the 358/2 Days | Final Mix mod that allows automatic version seperation, patching, backups, and checks for emulator compatibility so you don't have to!
 
 KingdomLauncher v2 [1.8mb] (HoloLauncher):
@@ -21,6 +25,6 @@ Supports Windows 11, Linux, and Mac
 
 | Mod | Credit |
 | ------ | ----------- |
-| 358/2 Days • Final Mix | Created by OShinobi |
+| 358/2 Days • Final Mix | Created by O’Shinobi ツ |
 
 Yeah I'm bad a GitHub and no I don't know how to use Tags right. Sobbing.
