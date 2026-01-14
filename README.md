@@ -4,7 +4,7 @@ A Kingdom Hearts II manager for the 358/2 Days | Final Mix mod that allows autom
 KingdomLauncher v2 [1.8mb] (HoloLauncher):
 Supports Windows 7, 10, and 11
 
-![](https://github.com/DaRealLando123/KingdomLauncher/blob/ccd803a21661a22c52da7c22c53110eb4d131fc9/Resources/v2)
+![](https://github.com/DaRealLando123/KingdomLauncher/blob/665e1f0db8ce9de5906dbcab8e53159e1b03d9ce/Resources/display2.png)
 
 KingdomLauncher v1 [314mb]:
 Supports Windows 11, Linux, and Mac
