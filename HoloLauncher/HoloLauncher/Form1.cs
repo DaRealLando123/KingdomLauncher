@@ -11,15 +11,21 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SharpCompress.Archives;
+using SharpCompress.Common;
 
 namespace HoloLauncher {
     public partial class Form1: Form {
 
         string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
+
         public Form1() {
             InitializeComponent();
             label1.BackColor = Color.FromArgb(150, 0, 0, 0);
+            string[] versions = new string[] { "Holo Demo I", "Holo Demo II" };
+            box_version.Items.AddRange(versions);
+            box_version.SelectedIndex = 0;
             //pictureBox1.Location = new Point(ClientSize.Width / 2 - pictureBox1.Width / 2, pictureBox1.Location.Y);
             PositionButton();
             DetectValidInstall();
@@ -41,9 +47,9 @@ namespace HoloLauncher {
             if (btn_InstallPlay.Text == "Play") {
 
                 var psi = new ProcessStartInfo {
-                    FileName = Path.Combine(docFolder, "KingdomLauncher", "PCSX2", "pcsx2.exe"),
+                    FileName = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2", "pcsx2.exe"),
                     Arguments = "-portable -batch KH2FM.NEW.ISO",
-                    WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher"),
+                    WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -61,7 +67,7 @@ namespace HoloLauncher {
         }
 
         private void DetectValidInstall() {
-            if (File.Exists(Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "PCSX2"))) {
+            if (File.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2"))) {
                 btn_InstallPlay.Text = "Play";
             } else {
                 btn_InstallPlay.Text = "Install";
@@ -70,7 +76,7 @@ namespace HoloLauncher {
             progressBar1.Visible = false;
             btn_InstallPlay.Enabled = true;
 
-            if (Directory.Exists(Path.Combine(docFolder, "KingdomLauncher"))) {
+            if (Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"))) {
                 btn_Uninstall.Enabled = true;
                 btn_dir.Visible = true;
             } else {
@@ -81,7 +87,7 @@ namespace HoloLauncher {
 
         async private Task InstallProcess() {
 
-            var newIsoPath = Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO");
+            var newIsoPath = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "KH2FM.NEW.ISO");
             if (File.Exists(newIsoPath)) {
                 File.Delete(newIsoPath);
             }
@@ -113,9 +119,9 @@ namespace HoloLauncher {
 
             CreateDirectories();
 
-            string tempFolder = Path.Combine(docFolder, "KingdomLauncher");
+            string tempFolder = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1");
 
-            label1.Text = "Copying ISO...";
+            label1.Text = "Copying ISO... (this is slow)";
 
             await Task.Run(() => {
                 File.Copy(ofd.FileName, Path.Combine(tempFolder, Path.GetFileName("KH2FM.ISO")), true);
@@ -125,13 +131,23 @@ namespace HoloLauncher {
                 progressBar1.Value = value;
             });
 
-            //label1.Text = "Downloading mod...";
+            label1.Text = "Downloading (1/4) DaysFM...";
 
-            //await DownloadFromURL("https://github.com/DaRealLando123/DaysFM/releases/download/Alpha/v0.034.Alpha.7z", Path.Combine(tempFolder, "Mod.zip"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/HoloDemo1/mod.7z", Path.Combine(tempFolder, "mod.7z"), progress);
 
-            //Task extractTask1 = Task.Run(() => {
-            //    ZipFile.ExtractToDirectory("Mod.zip", "Mod", true);
-            //});
+            Task extractTask1 = Task.Run(() =>
+            {
+                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(tempFolder, "mod.7z"));
+
+                archive.WriteToDirectory(
+                    tempFolder,
+                    new SharpCompress.Common.ExtractionOptions
+                    {
+                        ExtractFullPath = true,
+                        Overwrite = true
+                    }
+                );
+            });
 
             label1.Text = "Downloading (2/4) PCSX2 Emulator...";
 
@@ -140,7 +156,7 @@ namespace HoloLauncher {
             Task extractTask2 = Task.Run(() =>
             {
                 string zipPath = Path.Combine(tempFolder, "PCSX2.zip");
-                string extractPath = Path.Combine(docFolder, "KingdomLauncher", "PCSX2");
+                string extractPath = Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1", "PCSX2");
 
                 // Delete the folder if it exists to emulate 'overwrite'
                 if (Directory.Exists(extractPath)) {
@@ -158,16 +174,16 @@ namespace HoloLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Still extracting files...";
+            label1.Text = "Extracting DaysFM... (this is slow)";
 
-            //await extractTask1;
+            await extractTask1;
             await extractTask2;
 
             label1.Text = "Patching... (this is slow/laggy)";
 
             var psi = new ProcessStartInfo {
                 FileName = Path.Combine(tempFolder, "KH2FM.Toolkit.exe"),
-                Arguments = "-batch English.Patch.kh2patch ModAlpha.kh2patch KH2FM.NEW.ISO",
+                Arguments = "-batch English.Patch.kh2patch mod.kh2patch KH2FM.NEW.ISO",
                 WorkingDirectory = tempFolder,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -195,7 +211,8 @@ namespace HoloLauncher {
             File.Delete(Path.Combine(tempFolder, "English.Patch.kh2patch"));
             File.Delete(Path.Combine(tempFolder, "PCSX2.zip"));
             File.Delete(Path.Combine(tempFolder, "KH2FM.ISO"));
-            //File.Delete(Path.Combine(tempFolder, "ModAlpha.kh2patch"));
+            File.Delete(Path.Combine(tempFolder, "mod.7z"));
+            File.Delete(Path.Combine(tempFolder, "mod.kh2patch"));
 
             label1.Text = "Done Installing!";
 
@@ -206,7 +223,7 @@ namespace HoloLauncher {
         }
 
         private void CreateDirectories() {
-            Directory.CreateDirectory(Path.Combine(docFolder, "KingdomLauncher"));
+            Directory.CreateDirectory(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"));
         }
 
         private async Task DownloadFromURL(string url, string destination, IProgress<int> progress) {
@@ -252,14 +269,14 @@ namespace HoloLauncher {
 
         private void btn_Uninstall_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Are you sure you want to uninstall DaysFM?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
-            Directory.Delete(Path.Combine(docFolder, "KingdomLauncher"), true);
+            Directory.Delete(Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"), true);
             DetectValidInstall();
 
         }
 
         private void btn_dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(docFolder, "KingdomLauncher"));
+            Process.Start("explorer.exe", Path.Combine(docFolder, "KingdomLauncher", "HoloDemo1"));
         }
     }
 }
