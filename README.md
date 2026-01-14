@@ -19,3 +19,5 @@ KingdomLauncher v1:
 | Mod | Credit |
 | ------ | ----------- |
 | 358/2 Days • Final Mix | Created by OShinobi |
+
+Yeah I'm bad a GitHub and no I don't know how to use Tags right. Sobbing.
