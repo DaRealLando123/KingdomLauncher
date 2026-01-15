@@ -99,7 +99,7 @@ namespace HoloLauncher {
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "ISO files (*.iso)|*.iso";
-            ofd.Title = "Select the base game ISO file";
+            ofd.Title = "Select the Kingdom Hearts II - Final Mix+ (Japan) game ISO file you wish to use";
 
             label1.Text = "Choosing ISO...";
 
@@ -149,7 +149,7 @@ namespace HoloLauncher {
                 );
             });
 
-            label1.Text = "Downloading (2/4) PCSX2 Emulator...";
+            label1.Text = "Downloading (2/4) PCSX2...";
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(tempFolder, "PCSX2.zip"), progress);
 
@@ -174,7 +174,7 @@ namespace HoloLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Finishing up... (this takes time!!!)";
+            label1.Text = "Extracting DaysFM... (this is slow)";
 
             await extractTask1;
             await extractTask2;
@@ -201,6 +201,21 @@ namespace HoloLauncher {
                 while (await process.StandardError.ReadLineAsync() != null) { }
             });
 
+            ofd = new OpenFileDialog();
+            ofd.Filter = "BIOS files (*.bin)|*.bin";
+            ofd.Title = "Select the Playstation 2 BIOS file you wish to use (scph39001 preferred)";
+
+            result = MessageBox.Show("A PS2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in Documents/KindgomLauncher/PCSX2/bios", "BIOS Selection", MessageBoxButtons.YesNo);
+            Debug.WriteLine(result);
+
+            if (result == DialogResult.Yes)
+            {
+                ofd.ShowDialog();
+                await Task.Run(() => {
+                    File.Copy(ofd.FileName, Path.Combine(tempFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
+                });
+            }
+
             process.WaitForExit();
             await Task.WhenAll(stdoutTask, stderrTask);
 
@@ -213,6 +228,7 @@ namespace HoloLauncher {
             File.Delete(Path.Combine(tempFolder, "KH2FM.ISO"));
             File.Delete(Path.Combine(tempFolder, "mod.7z"));
             File.Delete(Path.Combine(tempFolder, "mod.kh2patch"));
+
 
             label1.Text = "Done Installing!";
 
