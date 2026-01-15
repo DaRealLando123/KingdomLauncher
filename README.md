@@ -23,8 +23,12 @@ Supports Windows 11, Linux, and Mac
 - [x] Automated Patching with Toolkit
 - [x] QOL Options (English Patches, Widescreen Patches, FPS Patches)
 
-| Mod | Credit |
-| ------ | ----------- |
+|  | Credit |
+| ---------- | ----------- |
 | 358/2 Days • Final Mix | Created by O’Shinobi ツ |
+| Launcher | DaRealLando123 |
+| Launcher Ast. | zpitolava22350
+| PCSX2 | PCSX2 Team |
+| English Patch |  |
 
 Yeah I'm bad a GitHub and no I don't know how to use Tags right. Sobbing.
