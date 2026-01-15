@@ -174,7 +174,7 @@ namespace HoloLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Extracting DaysFM... (this is slow)";
+            label1.Text = "Extracting DaysFM... (this is SLOW!!!)";
 
             await extractTask1;
             await extractTask2;
@@ -205,7 +205,7 @@ namespace HoloLauncher {
             ofd.Filter = "BIOS files (*.bin)|*.bin";
             ofd.Title = "Select the Playstation 2 BIOS file you wish to use (scph39001 preferred)";
 
-            result = MessageBox.Show("A PS2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in Documents/KindgomLauncher/PCSX2/bios", "BIOS Selection", MessageBoxButtons.YesNo);
+            result = MessageBox.Show("A Playstation 2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in "+ Path.Combine(tempFolder, "PCSX2", "bios"), "BIOS Selection", MessageBoxButtons.YesNo);
             Debug.WriteLine(result);
 
             if (result == DialogResult.Yes)
