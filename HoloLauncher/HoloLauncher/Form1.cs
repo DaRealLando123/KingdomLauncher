@@ -123,9 +123,13 @@ namespace HoloLauncher {
 
             label1.Text = "Copying ISO... (this is slow)";
 
+            progressBar1.Style = ProgressBarStyle.Marquee;
+
             await Task.Run(() => {
                 File.Copy(ofd.FileName, Path.Combine(tempFolder, Path.GetFileName("KH2FM.ISO")), true);
             });
+
+            progressBar1.Style = ProgressBarStyle.Continuous;
 
             var progress = new Progress<int>(value => {
                 progressBar1.Value = value;
@@ -149,6 +153,7 @@ namespace HoloLauncher {
                 );
             });
 
+
             label1.Text = "Downloading (2/4) PCSX2...";
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(tempFolder, "PCSX2.zip"), progress);
@@ -159,12 +164,14 @@ namespace HoloLauncher {
                 string extractPath = Path.Combine(docFolder, "KingdomLauncher", "PCSX2");
 
                 // Delete the folder if it exists to emulate 'overwrite'
-                if (Directory.Exists(extractPath)) {
+                if (Directory.Exists(extractPath))
+                {
                     Directory.Delete(extractPath, true);
                 }
-                
+
                 ZipFile.ExtractToDirectory(zipPath, extractPath);
             });
+
 
             label1.Text = "Downloading (3/4) Toolkit...";
 
@@ -174,10 +181,37 @@ namespace HoloLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Extracting DaysFM... (this is SLOW!!!)";
+            label1.Text = "Extracting PCSX2...";
+
+            progressBar1.Style = ProgressBarStyle.Marquee;
+
+            await extractTask2;
+
+            // HERE
+
+            label1.Text = "Extracting DaysFM... (this is SLOW!)";
+
+            ofd = new OpenFileDialog();
+            ofd.Filter = "BIOS files (*.bin)|*.bin";
+            ofd.Title = "Select the Playstation 2 BIOS file you wish to use (scph39001 preferred)";
+
+            result = MessageBox.Show("A Playstation 2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in " + Path.Combine(tempFolder, "PCSX2", "bios"), "BIOS Selection", MessageBoxButtons.YesNo);
+            Debug.WriteLine(result);
+
+            if (result == DialogResult.Yes)
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    await Task.Run(() =>
+                    {
+                        File.Copy(ofd.FileName, Path.Combine(tempFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
+                    });
+                }
+            }
 
             await extractTask1;
-            await extractTask2;
+
+            progressBar1.Style = ProgressBarStyle.Marquee;
 
             label1.Text = "Patching... (this is slow/laggy)";
 
@@ -201,21 +235,6 @@ namespace HoloLauncher {
                 while (await process.StandardError.ReadLineAsync() != null) { }
             });
 
-            ofd = new OpenFileDialog();
-            ofd.Filter = "BIOS files (*.bin)|*.bin";
-            ofd.Title = "Select the Playstation 2 BIOS file you wish to use (scph39001 preferred)";
-
-            result = MessageBox.Show("A Playstation 2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in "+ Path.Combine(tempFolder, "PCSX2", "bios"), "BIOS Selection", MessageBoxButtons.YesNo);
-            Debug.WriteLine(result);
-
-            if (result == DialogResult.Yes)
-            {
-                ofd.ShowDialog();
-                await Task.Run(() => {
-                    File.Copy(ofd.FileName, Path.Combine(tempFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
-                });
-            }
-
             process.WaitForExit();
             await Task.WhenAll(stdoutTask, stderrTask);
 
@@ -229,6 +248,7 @@ namespace HoloLauncher {
             File.Delete(Path.Combine(tempFolder, "mod.7z"));
             File.Delete(Path.Combine(tempFolder, "mod.kh2patch"));
 
+            progressBar1.Style = ProgressBarStyle.Continuous;
 
             label1.Text = "Done Installing!";
 

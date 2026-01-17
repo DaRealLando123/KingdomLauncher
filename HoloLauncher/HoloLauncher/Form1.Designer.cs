@@ -60,6 +60,7 @@ namespace HoloLauncher {
             this.progressBar1.Location = new System.Drawing.Point(9, 187);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(329, 20);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 1;
             this.progressBar1.Visible = false;
             // 
