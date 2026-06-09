@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace HoloLauncher {
+namespace KingdomLauncher {
     partial class Form1 {
         /// <summary>
         /// Required designer variable.
@@ -30,12 +30,11 @@ namespace HoloLauncher {
             this.label1 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.btn_Uninstall = new System.Windows.Forms.Button();
             this.btn_InstallPlay = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.btn_dir = new System.Windows.Forms.Button();
             this.box_version = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.btn_del = new System.Windows.Forms.Button();
+            this.btn_help = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,43 +66,20 @@ namespace HoloLauncher {
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Image = global::HoloLauncher.Properties.Resources.Logo;
-            this.pictureBox1.Location = new System.Drawing.Point(125, 2);
+            this.pictureBox1.BackgroundImage = global::KingdomLauncher.Properties.Resources.Logo;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox1.Location = new System.Drawing.Point(82, 1);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(110, 81);
+            this.pictureBox1.Size = new System.Drawing.Size(196, 149);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // btn_Uninstall
-            // 
-            this.btn_Uninstall.BackColor = System.Drawing.Color.Transparent;
-            this.btn_Uninstall.BackgroundImage = global::HoloLauncher.Properties.Resources.Man;
-            this.btn_Uninstall.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btn_Uninstall.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btn_Uninstall.Enabled = false;
-            this.btn_Uninstall.FlatAppearance.BorderSize = 0;
-            this.btn_Uninstall.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.btn_Uninstall.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.btn_Uninstall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_Uninstall.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btn_Uninstall.ForeColor = System.Drawing.Color.Transparent;
-            this.btn_Uninstall.Location = new System.Drawing.Point(117, 122);
-            this.btn_Uninstall.Name = "btn_Uninstall";
-            this.btn_Uninstall.Size = new System.Drawing.Size(138, 23);
-            this.btn_Uninstall.TabIndex = 4;
-            this.btn_Uninstall.TabStop = false;
-            this.btn_Uninstall.Text = "Uninstall";
-            this.btn_Uninstall.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btn_Uninstall.UseVisualStyleBackColor = false;
-            this.btn_Uninstall.Click += new System.EventHandler(this.btn_Uninstall_Click);
-            // 
             // btn_InstallPlay
             // 
             this.btn_InstallPlay.BackColor = System.Drawing.Color.Transparent;
-            this.btn_InstallPlay.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_InstallPlay.BackgroundImage")));
-            this.btn_InstallPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btn_InstallPlay.BackgroundImage = global::KingdomLauncher.Properties.Resources.Roxas;
+            this.btn_InstallPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btn_InstallPlay.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btn_InstallPlay.FlatAppearance.BorderSize = 0;
             this.btn_InstallPlay.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -111,28 +87,15 @@ namespace HoloLauncher {
             this.btn_InstallPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_InstallPlay.Font = new System.Drawing.Font("Palatino Linotype", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_InstallPlay.ForeColor = System.Drawing.Color.White;
-            this.btn_InstallPlay.Location = new System.Drawing.Point(111, 84);
+            this.btn_InstallPlay.Location = new System.Drawing.Point(103, 141);
             this.btn_InstallPlay.Name = "btn_InstallPlay";
-            this.btn_InstallPlay.Size = new System.Drawing.Size(138, 32);
+            this.btn_InstallPlay.Size = new System.Drawing.Size(151, 37);
             this.btn_InstallPlay.TabIndex = 0;
             this.btn_InstallPlay.TabStop = false;
             this.btn_InstallPlay.Text = "Install";
             this.btn_InstallPlay.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btn_InstallPlay.UseVisualStyleBackColor = false;
             this.btn_InstallPlay.Click += new System.EventHandler(this.btn_InstallPlay_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(6, 170);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(335, 26);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Launcher created by DaRealLando123 with help from zpitolava22350\r\n358/2 Days Fina" +
-    "l Mix created by O’Shinobi ツ";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btn_dir
             // 
@@ -141,12 +104,13 @@ namespace HoloLauncher {
             this.btn_dir.FlatAppearance.BorderSize = 0;
             this.btn_dir.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.btn_dir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_dir.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_dir.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_dir.Location = new System.Drawing.Point(249, 122);
+            this.btn_dir.Location = new System.Drawing.Point(225, 179);
             this.btn_dir.Name = "btn_dir";
             this.btn_dir.Size = new System.Drawing.Size(23, 23);
             this.btn_dir.TabIndex = 6;
-            this.btn_dir.Text = "📂";
+            this.btn_dir.Text = "📁";
             this.btn_dir.UseVisualStyleBackColor = false;
             this.btn_dir.Visible = false;
             this.btn_dir.Click += new System.EventHandler(this.btn_dir_Click);
@@ -156,39 +120,61 @@ namespace HoloLauncher {
             this.box_version.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.box_version.FormattingEnabled = true;
             this.box_version.ItemHeight = 13;
-            this.box_version.Location = new System.Drawing.Point(9, 9);
+            this.box_version.Location = new System.Drawing.Point(103, 180);
             this.box_version.Name = "box_version";
             this.box_version.Size = new System.Drawing.Size(87, 21);
             this.box_version.TabIndex = 7;
-            this.box_version.Visible = false;
             // 
-            // label3
+            // btn_del
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(275, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Holo Demo I";
+            this.btn_del.BackColor = System.Drawing.Color.Transparent;
+            this.btn_del.Cursor = System.Windows.Forms.Cursors.Help;
+            this.btn_del.FlatAppearance.BorderSize = 0;
+            this.btn_del.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btn_del.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_del.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_del.ForeColor = System.Drawing.SystemColors.Control;
+            this.btn_del.Location = new System.Drawing.Point(196, 179);
+            this.btn_del.Name = "btn_del";
+            this.btn_del.Size = new System.Drawing.Size(23, 23);
+            this.btn_del.TabIndex = 6;
+            this.btn_del.Text = "🗑️";
+            this.btn_del.UseVisualStyleBackColor = false;
+            this.btn_del.Visible = false;
+            this.btn_del.Click += new System.EventHandler(this.btn_del_Click);
+            // 
+            // btn_help
+            // 
+            this.btn_help.BackColor = System.Drawing.Color.Transparent;
+            this.btn_help.Cursor = System.Windows.Forms.Cursors.Help;
+            this.btn_help.FlatAppearance.BorderSize = 0;
+            this.btn_help.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btn_help.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_help.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_help.ForeColor = System.Drawing.SystemColors.Control;
+            this.btn_help.Location = new System.Drawing.Point(315, 12);
+            this.btn_help.Name = "btn_help";
+            this.btn_help.Size = new System.Drawing.Size(23, 23);
+            this.btn_help.TabIndex = 6;
+            this.btn_help.Text = "?";
+            this.btn_help.UseVisualStyleBackColor = false;
+            this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::HoloLauncher.Properties.Resources.BackgroundImage;
+            this.BackgroundImage = global::KingdomLauncher.Properties.Resources.BackgroundImage;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(349, 214);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.box_version);
+            this.Controls.Add(this.btn_del);
+            this.Controls.Add(this.btn_help);
             this.Controls.Add(this.btn_dir);
-            this.Controls.Add(this.btn_Uninstall);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btn_InstallPlay);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.label2);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -197,7 +183,6 @@ namespace HoloLauncher {
             this.Text = "KingdomLauncher";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -205,12 +190,11 @@ namespace HoloLauncher {
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private PictureBox pictureBox1;
-        private Button btn_Uninstall;
         private Button btn_InstallPlay;
-        private Label label2;
         private Button btn_dir;
+        private Button btn_del;
         private ComboBox box_version;
-        private Label label3;
+        private Button btn_help;
     }
 }
 

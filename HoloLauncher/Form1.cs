@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SharpCompress.Archives;
+using SharpCompress.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,17 +10,15 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SharpCompress.Archives;
-using SharpCompress.Common;
 
-namespace HoloLauncher {
+namespace KingdomLauncher {
     public partial class Form1: Form {
 
-        string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
+        string launcherFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher");
 
         public Form1() {
             InitializeComponent();
@@ -46,56 +46,83 @@ namespace HoloLauncher {
         async private void btn_InstallPlay_Click(object sender, EventArgs e) {
             if (btn_InstallPlay.Text == "Play") {
 
-                var psi = new ProcessStartInfo {
-                    FileName = Path.Combine(docFolder, "KingdomLauncher", "PCSX2", "pcsx2.exe"),
-                    Arguments = "-portable -batch KH2FM.NEW.ISO",
-                    WorkingDirectory = Path.Combine(docFolder, "KingdomLauncher"),
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    RedirectStandardInput = true,
-                    CreateNoWindow = true
-                };
-                var process = Process.Start(psi) ?? throw new InvalidOperationException();
+                if (!DetectValidBIOS()) {
 
-                Close();
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.Filter = "BIOS files (*.bin)|*.bin";
+                    ofd.Title = "Select the Playstation 2 scph39001 BIOS file you wish to use.";
+
+                    var result = MessageBox.Show("A legally obtained Playstation 2 scph39001 BIOS is needed to launch the game. Would you like to select one now?\n\nThe BIOS will be added to " + Path.Combine(launcherFolder, "PCSX2", "bios"), "A Playstation 2 scph39001 BIOS is required.", MessageBoxButtons.YesNo);
+                    Debug.WriteLine(result);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        if (ofd.ShowDialog() == DialogResult.OK)
+                        {
+                            await Task.Run(() =>
+                            {
+                                File.Copy(ofd.FileName, Path.Combine(launcherFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
+                            });
+                        }
+                    }
+                } else {
+
+                    var psi = new ProcessStartInfo {
+                        FileName = Path.Combine(launcherFolder, "PCSX2", "pcsx2.exe"),
+                        Arguments = "-portable -batch KH2FM.NEW.ISO",
+                        WorkingDirectory = Path.Combine(launcherFolder),
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        RedirectStandardInput = true,
+                        CreateNoWindow = true
+                    };
+                    var process = Process.Start(psi) ?? throw new InvalidOperationException();
+
+                    Close();
+
+                }
 
             } else {
                 await InstallProcess();
             }
-
         }
 
         private void DetectValidInstall() {
-            if (File.Exists(Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(docFolder, "KingdomLauncher", "PCSX2"))) {
+            if (File.Exists(Path.Combine(launcherFolder, "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(launcherFolder, "PCSX2"))) {
                 btn_InstallPlay.Text = "Play";
             } else {
                 btn_InstallPlay.Text = "Install";
             }
             label1.Visible = false;
             progressBar1.Visible = false;
-            btn_InstallPlay.Enabled = true;
+            btn_InstallPlay.Visible = true;
+            box_version.Visible = true;
 
-            if (Directory.Exists(Path.Combine(docFolder, "KingdomLauncher"))) {
-                btn_Uninstall.Enabled = true;
+            if (Directory.Exists(Path.Combine(launcherFolder))) {
+                btn_del.Visible = true;
                 btn_dir.Visible = true;
             } else {
-                btn_Uninstall.Enabled = false;
+                btn_del.Visible = false;
                 btn_dir.Visible = false;
             }
         }
 
+        private bool DetectValidBIOS() {
+            return Directory.EnumerateFiles(Path.Combine(launcherFolder, "PCSX2", "bios"),"*.bin").Any();
+        }
+
         async private Task InstallProcess() {
 
-            var newIsoPath = Path.Combine(docFolder, "KingdomLauncher", "KH2FM.NEW.ISO");
+            var newIsoPath = Path.Combine(launcherFolder, "KH2FM.NEW.ISO");
             if (File.Exists(newIsoPath)) {
                 File.Delete(newIsoPath);
             }
 
             label1.Visible = true;
             progressBar1.Visible = true;
-            btn_InstallPlay.Enabled = false;
-            btn_InstallPlay.Text = "Installing...";
+            btn_InstallPlay.Visible = false;
+            box_version.Visible = false;
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "ISO files (*.iso)|*.iso";
@@ -115,18 +142,14 @@ namespace HoloLauncher {
                 return;
             }
 
-            btn_Uninstall.Enabled = false;
-
             CreateDirectories();
-
-            string tempFolder = Path.Combine(docFolder, "KingdomLauncher");
 
             label1.Text = "Copying ISO... (this is slow)";
 
             progressBar1.Style = ProgressBarStyle.Marquee;
 
             await Task.Run(() => {
-                File.Copy(ofd.FileName, Path.Combine(tempFolder, Path.GetFileName("KH2FM.ISO")), true);
+                File.Copy(ofd.FileName, Path.Combine(launcherFolder, Path.GetFileName("KH2FM.ISO")), true);
             });
 
             progressBar1.Style = ProgressBarStyle.Continuous;
@@ -137,14 +160,14 @@ namespace HoloLauncher {
 
             label1.Text = "Downloading (1/4) DaysFM...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/HoloDemo1/mod.7z", Path.Combine(tempFolder, "mod.7z"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/HoloDemo1/mod.7z", Path.Combine(launcherFolder, "mod.7z"), progress);
 
             Task extractTask1 = Task.Run(() =>
             {
-                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(tempFolder, "mod.7z"));
+                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(launcherFolder, "mod.7z"));
 
                 archive.WriteToDirectory(
-                    tempFolder,
+                    launcherFolder,
                     new SharpCompress.Common.ExtractionOptions
                     {
                         ExtractFullPath = true,
@@ -156,12 +179,12 @@ namespace HoloLauncher {
 
             label1.Text = "Downloading (2/4) PCSX2...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(tempFolder, "PCSX2.zip"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(launcherFolder, "PCSX2.zip"), progress);
 
             Task extractTask2 = Task.Run(() =>
             {
-                string zipPath = Path.Combine(tempFolder, "PCSX2.zip");
-                string extractPath = Path.Combine(docFolder, "KingdomLauncher", "PCSX2");
+                string zipPath = Path.Combine(launcherFolder, "PCSX2.zip");
+                string extractPath = Path.Combine(launcherFolder, "PCSX2");
 
                 // Delete the folder if it exists to emulate 'overwrite'
                 if (Directory.Exists(extractPath))
@@ -175,11 +198,11 @@ namespace HoloLauncher {
 
             label1.Text = "Downloading (3/4) Toolkit...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/KH2FM.Toolkit.exe", Path.Combine(tempFolder, "KH2FM.Toolkit.exe"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/KH2FM.Toolkit.exe", Path.Combine(launcherFolder, "KH2FM.Toolkit.exe"), progress);
 
             label1.Text = "Downloading (4/4) English patch...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(tempFolder, "English.Patch.kh2patch"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(launcherFolder, "English.Patch.kh2patch"), progress);
 
             label1.Text = "Extracting PCSX2...";
 
@@ -191,24 +214,6 @@ namespace HoloLauncher {
 
             label1.Text = "Extracting DaysFM... (this is SLOW!)";
 
-            ofd = new OpenFileDialog();
-            ofd.Filter = "BIOS files (*.bin)|*.bin";
-            ofd.Title = "Select the Playstation 2 BIOS file you wish to use (scph39001 preferred)";
-
-            result = MessageBox.Show("A Playstation 2 BIOS is required.\nA *legally* obtained BIOS is needed to launch the game. Would you like to select one now?\n\nYou can always add a BIOS later in " + Path.Combine(tempFolder, "PCSX2", "bios"), "BIOS Selection", MessageBoxButtons.YesNo);
-            Debug.WriteLine(result);
-
-            if (result == DialogResult.Yes)
-            {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    await Task.Run(() =>
-                    {
-                        File.Copy(ofd.FileName, Path.Combine(tempFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
-                    });
-                }
-            }
-
             await extractTask1;
 
             progressBar1.Style = ProgressBarStyle.Marquee;
@@ -216,9 +221,9 @@ namespace HoloLauncher {
             label1.Text = "Patching... (this is slow/laggy)";
 
             var psi = new ProcessStartInfo {
-                FileName = Path.Combine(tempFolder, "KH2FM.Toolkit.exe"),
+                FileName = Path.Combine(launcherFolder, "KH2FM.Toolkit.exe"),
                 Arguments = "-batch English.Patch.kh2patch mod.kh2patch KH2FM.NEW.ISO",
-                WorkingDirectory = tempFolder,
+                WorkingDirectory = launcherFolder,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -242,11 +247,11 @@ namespace HoloLauncher {
 
             process.Dispose();
 
-            File.Delete(Path.Combine(tempFolder, "English.Patch.kh2patch"));
-            File.Delete(Path.Combine(tempFolder, "PCSX2.zip"));
-            File.Delete(Path.Combine(tempFolder, "KH2FM.ISO"));
-            File.Delete(Path.Combine(tempFolder, "mod.7z"));
-            File.Delete(Path.Combine(tempFolder, "mod.kh2patch"));
+            File.Delete(Path.Combine(launcherFolder, "English.Patch.kh2patch"));
+            File.Delete(Path.Combine(launcherFolder, "PCSX2.zip"));
+            File.Delete(Path.Combine(launcherFolder, "KH2FM.ISO"));
+            File.Delete(Path.Combine(launcherFolder, "mod.7z"));
+            File.Delete(Path.Combine(launcherFolder, "mod.kh2patch"));
 
             progressBar1.Style = ProgressBarStyle.Continuous;
 
@@ -259,7 +264,7 @@ namespace HoloLauncher {
         }
 
         private void CreateDirectories() {
-            Directory.CreateDirectory(Path.Combine(docFolder, "KingdomLauncher"));
+            Directory.CreateDirectory(Path.Combine(launcherFolder));
         }
 
         private async Task DownloadFromURL(string url, string destination, IProgress<int> progress) {
@@ -303,16 +308,20 @@ namespace HoloLauncher {
             );*/
         }
 
-        private void btn_Uninstall_Click(object sender, EventArgs e) {
+        private void btn_del_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Are you sure you want to uninstall DaysFM?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
-            Directory.Delete(Path.Combine(docFolder, "KingdomLauncher"), true);
+            Directory.Delete(launcherFolder, true);
             DetectValidInstall();
 
         }
 
         private void btn_dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", Path.Combine(docFolder, "KingdomLauncher"));
+            Process.Start("explorer.exe", launcherFolder);
+        }
+
+        private void btn_help_Click(object sender, EventArgs e) {
+            MessageBox.Show("Launcher created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ", "Help", MessageBoxButtons.OK);
         }
     }
 }
