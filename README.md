@@ -29,4 +29,4 @@ Supports Windows 11, Linux, and Mac
 | KingdomLauncher | DaRealLando123 |
 | KingdomLauncher | zpitolava22350 |
 | PCSX2 | PCSX2 Team |
-| English Patch | Crazycats00 |
+| English Patch | Crazycatz00 |
