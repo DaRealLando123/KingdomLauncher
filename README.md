@@ -26,9 +26,7 @@ Supports Windows 11, Linux, and Mac
 |  | Credit |
 | ---------- | ----------- |
 | 358/2 Days • Final Mix | O’Shinobi ツ |
-| Launcher | DaRealLando123 |
-| Launcher | zpitolava22350 |
+| KingdomLauncher | DaRealLando123 |
+| KingdomLauncher | zpitolava22350 |
 | PCSX2 | PCSX2 Team |
 | English Patch | Crazycats00 |
-
-Yeah I'm bad a GitHub and no I don't know how to use Tags right. Sobbing.
