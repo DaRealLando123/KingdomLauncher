@@ -14,8 +14,6 @@ Supports Windows 7, 10, and 11
 KingdomLauncher v1 [314mb]:
 Supports Windows 11, Linux, and Mac
 
-![](https://github.com/DaRealLando123/KingdomLauncher/blob/1fd0f06569d60b04ab19fd37d1bb1e02365e26c4/Resources/display1.gif)
-
 ## Ok... But what can it do?
 
 - [x] Mod Integration
