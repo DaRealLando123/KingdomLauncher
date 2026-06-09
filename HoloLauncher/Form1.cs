@@ -109,19 +109,20 @@ namespace KingdomLauncher {
                 Debug.WriteLine(box_version.SelectedItem.ToString());
                 versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
             } catch (Exception ex) {
+                string[] folders = Directory.GetDirectories(launcherFolder);
+
+                foreach (string folderPath in folders) {
+                    string folderName = Path.GetFileName(folderPath);
+
+                    box_version.Items.Add(folderName);
+                }
+
                 if (box_version.Items.Count <= 0) {
-                    MessageBox.Show("Couldn't fetch any online releases. It could be that your internet or GitHub is down.\n\nOnce a version is installed, you can run the launcher offline.", "Error", MessageBoxButtons.OK);
+                    MessageBox.Show("Couldn't load the online version list.\nIt could be that your internet or GitHub is down.\n\nSince you have nothing installed, the launcher cannot run offline. Try reconnecting your wifi or retrying after a few minutes.\n\nAfter you install a version, you can run the launcher offline.", "Error loading version list", MessageBoxButtons.OK);
                     this.Close();
                 } else {
-                    MessageBox.Show("Couldn't fetch any online releases. It could be that your internet or GitHub is down.\n\nOnly currently installed versions will be shown.", "Error", MessageBoxButtons.OK);
-
-                    string[] folders = Directory.GetDirectories(launcherFolder);
-
-                    foreach (string folderPath in folders) {
-                        string folderName = Path.GetFileName(folderPath);
-
-                        box_version.Items.Add(folderName);
-                    }
+                    MessageBox.Show("Couldn't load the online version list.\nIt could be that your internet or GitHub is down.\n\nOnly currently installed versions will be shown.", "Error loading version list", MessageBoxButtons.OK);
+                    box_version.SelectedIndex = 0;
                 }
             }
             DetectValidInstall();
@@ -361,7 +362,7 @@ namespace KingdomLauncher {
         }
 
         private void btn_help_Click(object sender, EventArgs e) {
-            MessageBox.Show("Launcher created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ", "Help", MessageBoxButtons.OK);
+            MessageBox.Show("Created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ\n\nOpen-sourced on GitHub:\nhttps://github.com/DaRealLando123/KingdomLauncher\n\nLatest Update:\n+ Added Version Selector\nChanged file directories to function with multiple game versions. Old versions will require a reinstall!\n+ Improved Launcher UI\nReplaced old textures with higher fidelity ones and and revised layout of elements.\n+ Lowered Install File Size Footprint\nSwapped to 7zip as the compressor.", "KingdomLauncher v2.1", MessageBoxButtons.OK);
         }
 
         private void box_version_Changed(object sender, EventArgs e) {
