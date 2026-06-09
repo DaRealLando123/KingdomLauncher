@@ -125,6 +125,7 @@ namespace KingdomLauncher {
             this.box_version.Name = "box_version";
             this.box_version.Size = new System.Drawing.Size(87, 21);
             this.box_version.TabIndex = 7;
+            this.box_version.Visible = false;
             this.box_version.SelectedIndexChanged += new System.EventHandler(this.box_version_Changed);
             // 
             // btn_del
