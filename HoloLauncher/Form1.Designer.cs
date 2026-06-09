@@ -68,7 +68,7 @@ namespace KingdomLauncher {
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImage = global::KingdomLauncher.Properties.Resources.Logo;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(82, 1);
+            this.pictureBox1.Location = new System.Drawing.Point(82, 5);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(196, 149);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -87,7 +87,7 @@ namespace KingdomLauncher {
             this.btn_InstallPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_InstallPlay.Font = new System.Drawing.Font("Palatino Linotype", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_InstallPlay.ForeColor = System.Drawing.Color.White;
-            this.btn_InstallPlay.Location = new System.Drawing.Point(103, 141);
+            this.btn_InstallPlay.Location = new System.Drawing.Point(105, 138);
             this.btn_InstallPlay.Name = "btn_InstallPlay";
             this.btn_InstallPlay.Size = new System.Drawing.Size(151, 37);
             this.btn_InstallPlay.TabIndex = 0;
@@ -95,6 +95,7 @@ namespace KingdomLauncher {
             this.btn_InstallPlay.Text = "Install";
             this.btn_InstallPlay.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btn_InstallPlay.UseVisualStyleBackColor = false;
+            this.btn_InstallPlay.Visible = false;
             this.btn_InstallPlay.Click += new System.EventHandler(this.btn_InstallPlay_Click);
             // 
             // btn_dir
@@ -106,7 +107,7 @@ namespace KingdomLauncher {
             this.btn_dir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_dir.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_dir.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_dir.Location = new System.Drawing.Point(225, 179);
+            this.btn_dir.Location = new System.Drawing.Point(227, 176);
             this.btn_dir.Name = "btn_dir";
             this.btn_dir.Size = new System.Drawing.Size(23, 23);
             this.btn_dir.TabIndex = 6;
@@ -120,10 +121,11 @@ namespace KingdomLauncher {
             this.box_version.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.box_version.FormattingEnabled = true;
             this.box_version.ItemHeight = 13;
-            this.box_version.Location = new System.Drawing.Point(103, 180);
+            this.box_version.Location = new System.Drawing.Point(137, 177);
             this.box_version.Name = "box_version";
             this.box_version.Size = new System.Drawing.Size(87, 21);
             this.box_version.TabIndex = 7;
+            this.box_version.SelectedIndexChanged += new System.EventHandler(this.box_version_Changed);
             // 
             // btn_del
             // 
@@ -134,7 +136,7 @@ namespace KingdomLauncher {
             this.btn_del.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_del.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_del.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_del.Location = new System.Drawing.Point(196, 179);
+            this.btn_del.Location = new System.Drawing.Point(110, 176);
             this.btn_del.Name = "btn_del";
             this.btn_del.Size = new System.Drawing.Size(23, 23);
             this.btn_del.TabIndex = 6;

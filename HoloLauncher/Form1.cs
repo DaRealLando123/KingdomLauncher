@@ -12,6 +12,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,16 +21,14 @@ namespace KingdomLauncher {
     public partial class Form1: Form {
 
         string launcherFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher");
+        string versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", "HoloDemo1");
 
         public Form1() {
             InitializeComponent();
             label1.BackColor = Color.FromArgb(150, 0, 0, 0);
-            string[] versions = new string[] { "Holo Demo I", "Holo Demo II" };
-            box_version.Items.AddRange(versions);
-            box_version.SelectedIndex = 0;
             //pictureBox1.Location = new Point(ClientSize.Width / 2 - pictureBox1.Width / 2, pictureBox1.Location.Y);
             PositionButton();
-            DetectValidInstall();
+            FetchVersions();
         }
 
         /*
@@ -52,7 +52,7 @@ namespace KingdomLauncher {
                     ofd.Filter = "BIOS files (*.bin)|*.bin";
                     ofd.Title = "Select the Playstation 2 scph39001 BIOS file you wish to use.";
 
-                    var result = MessageBox.Show("A legally obtained Playstation 2 scph39001 BIOS is needed to launch the game. Would you like to select one now?\n\nThe BIOS will be added to " + Path.Combine(launcherFolder, "PCSX2", "bios"), "A Playstation 2 scph39001 BIOS is required.", MessageBoxButtons.YesNo);
+                    var result = MessageBox.Show("A legally obtained Playstation 2 scph39001 BIOS is needed to launch the game. Would you like to select one now?\n\nThe BIOS will be added to " + Path.Combine(versionFolder, "PCSX2", "bios"), "A Playstation 2 scph39001 BIOS is required.", MessageBoxButtons.YesNo);
                     Debug.WriteLine(result);
 
                     if (result == DialogResult.Yes)
@@ -61,16 +61,16 @@ namespace KingdomLauncher {
                         {
                             await Task.Run(() =>
                             {
-                                File.Copy(ofd.FileName, Path.Combine(launcherFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
+                                File.Copy(ofd.FileName, Path.Combine(versionFolder, "PCSX2", "BIOS", Path.GetFileName(ofd.FileName)), true);
                             });
                         }
                     }
                 } else {
 
                     var psi = new ProcessStartInfo {
-                        FileName = Path.Combine(launcherFolder, "PCSX2", "pcsx2.exe"),
+                        FileName = Path.Combine(versionFolder, "PCSX2", "pcsx2.exe"),
                         Arguments = "-portable -batch KH2FM.NEW.ISO",
-                        WorkingDirectory = Path.Combine(launcherFolder),
+                        WorkingDirectory = Path.Combine(versionFolder),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -88,8 +88,47 @@ namespace KingdomLauncher {
             }
         }
 
+        private async Task FetchVersions() {
+            box_version.Items.Clear();
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("KingdomLauncher");
+
+            try {
+                string jsonResponse = await client.GetStringAsync("https://api.github.com/repos/DaRealLando123/DaysFMMirror/releases");
+                JsonDocument docs = JsonDocument.Parse(jsonResponse);
+
+                foreach (JsonElement release in docs.RootElement.EnumerateArray()) {
+                    if (release.TryGetProperty("tag_name", out JsonElement tagElement)) {
+                        string version = tagElement.GetString();
+
+                        box_version.Items.Add(version);
+                    }
+                }
+                box_version.SelectedIndex = 0;
+                Debug.WriteLine(box_version.SelectedItem.ToString());
+                versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
+            } catch (Exception ex) {
+                if (box_version.Items.Count <= 0) {
+                    MessageBox.Show("Couldn't fetch any online releases. It could be that your internet or GitHub is down.\n\nOnce a version is installed, you can run the launcher offline.", "Error", MessageBoxButtons.OK);
+                    this.Close();
+                } else {
+                    MessageBox.Show("Couldn't fetch any online releases. It could be that your internet or GitHub is down.\n\nOnly currently installed versions will be shown.", "Error", MessageBoxButtons.OK);
+
+                    string[] folders = Directory.GetDirectories(launcherFolder);
+
+                    foreach (string folderPath in folders) {
+                        string folderName = Path.GetFileName(folderPath);
+
+                        box_version.Items.Add(folderName);
+                    }
+                }
+            }
+            DetectValidInstall();
+        }
+
         private void DetectValidInstall() {
-            if (File.Exists(Path.Combine(launcherFolder, "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(launcherFolder, "PCSX2"))) {
+            if (File.Exists(Path.Combine(versionFolder, "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(versionFolder, "PCSX2"))) {
                 btn_InstallPlay.Text = "Play";
             } else {
                 btn_InstallPlay.Text = "Install";
@@ -99,7 +138,7 @@ namespace KingdomLauncher {
             btn_InstallPlay.Visible = true;
             box_version.Visible = true;
 
-            if (Directory.Exists(Path.Combine(launcherFolder))) {
+            if (Directory.Exists(Path.Combine(versionFolder))) {
                 btn_del.Visible = true;
                 btn_dir.Visible = true;
             } else {
@@ -109,12 +148,12 @@ namespace KingdomLauncher {
         }
 
         private bool DetectValidBIOS() {
-            return Directory.EnumerateFiles(Path.Combine(launcherFolder, "PCSX2", "bios"),"*.bin").Any();
+            return Directory.EnumerateFiles(Path.Combine(versionFolder, "PCSX2", "bios"),"*.bin").Any();
         }
 
-        async private Task InstallProcess() {
+        private async Task InstallProcess() {
 
-            var newIsoPath = Path.Combine(launcherFolder, "KH2FM.NEW.ISO");
+            var newIsoPath = Path.Combine(versionFolder, "KH2FM.NEW.ISO");
             if (File.Exists(newIsoPath)) {
                 File.Delete(newIsoPath);
             }
@@ -130,7 +169,7 @@ namespace KingdomLauncher {
 
             label1.Text = "Choosing ISO...";
 
-            var result = MessageBox.Show("Kingdom Hearts II - Final Mix+ (Japan) is required.\nA *legally* obtained ISO is needed to continue.", "ISO Selection", MessageBoxButtons.OKCancel);
+            var result = MessageBox.Show("Kingdom Hearts II - Final Mix+ (Japan) is required.\nA legally obtained ISO is needed to continue.", "ISO Selection", MessageBoxButtons.OKCancel);
             Debug.WriteLine(result);
             if (result != DialogResult.OK) {
                 DetectValidInstall();
@@ -149,7 +188,7 @@ namespace KingdomLauncher {
             progressBar1.Style = ProgressBarStyle.Marquee;
 
             await Task.Run(() => {
-                File.Copy(ofd.FileName, Path.Combine(launcherFolder, Path.GetFileName("KH2FM.ISO")), true);
+                File.Copy(ofd.FileName, Path.Combine(versionFolder, Path.GetFileName("KH2FM.ISO")), true);
             });
 
             progressBar1.Style = ProgressBarStyle.Continuous;
@@ -160,14 +199,14 @@ namespace KingdomLauncher {
 
             label1.Text = "Downloading (1/4) DaysFM...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/HoloDemo1/mod.7z", Path.Combine(launcherFolder, "mod.7z"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/"+ box_version.SelectedItem.ToString() + "/mod.7z", Path.Combine(versionFolder, "mod.7z"), progress);
 
             Task extractTask1 = Task.Run(() =>
             {
-                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(launcherFolder, "mod.7z"));
+                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(versionFolder, "mod.7z"));
 
                 archive.WriteToDirectory(
-                    launcherFolder,
+                    versionFolder,
                     new SharpCompress.Common.ExtractionOptions
                     {
                         ExtractFullPath = true,
@@ -179,32 +218,33 @@ namespace KingdomLauncher {
 
             label1.Text = "Downloading (2/4) PCSX2...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/PCSX2.2.4.0.zip", Path.Combine(launcherFolder, "PCSX2.zip"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/" + box_version.SelectedItem.ToString() + "/PCSX2.7z", Path.Combine(versionFolder, "PCSX2.7z"), progress);
 
             Task extractTask2 = Task.Run(() =>
             {
-                string zipPath = Path.Combine(launcherFolder, "PCSX2.zip");
-                string extractPath = Path.Combine(launcherFolder, "PCSX2");
+                var archive = SharpCompress.Archives.ArchiveFactory.Open(Path.Combine(versionFolder, "PCSX2.7z"));
 
-                // Delete the folder if it exists to emulate 'overwrite'
-                if (Directory.Exists(extractPath))
-                {
-                    Directory.Delete(extractPath, true);
-                }
+                Directory.CreateDirectory(Path.Combine(versionFolder, "PCSX2"));
 
-                ZipFile.ExtractToDirectory(zipPath, extractPath);
+                archive.WriteToDirectory(
+                    Path.Combine(versionFolder, "PCSX2"),
+                    new SharpCompress.Common.ExtractionOptions {
+                        ExtractFullPath = true,
+                        Overwrite = true
+                    }
+                );
             });
 
 
             label1.Text = "Downloading (3/4) Toolkit...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/KH2FM.Toolkit.exe", Path.Combine(launcherFolder, "KH2FM.Toolkit.exe"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/KH2FM.Toolkit.exe", Path.Combine(versionFolder, "KH2FM.Toolkit.exe"), progress);
 
             label1.Text = "Downloading (4/4) English patch...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(launcherFolder, "English.Patch.kh2patch"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(versionFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Extracting PCSX2...";
+            label1.Text = "Extracting (1/2) PCSX2... (This is slow!)";
 
             progressBar1.Style = ProgressBarStyle.Marquee;
 
@@ -212,18 +252,18 @@ namespace KingdomLauncher {
 
             // HERE
 
-            label1.Text = "Extracting DaysFM... (this is SLOW!)";
+            label1.Text = "Extracting (2/2) DaysFM... (This is slow!)";
 
             await extractTask1;
 
             progressBar1.Style = ProgressBarStyle.Marquee;
 
-            label1.Text = "Patching... (this is slow/laggy)";
+            label1.Text = "Patching... (This is slow!)";
 
             var psi = new ProcessStartInfo {
-                FileName = Path.Combine(launcherFolder, "KH2FM.Toolkit.exe"),
+                FileName = Path.Combine(versionFolder, "KH2FM.Toolkit.exe"),
                 Arguments = "-batch English.Patch.kh2patch mod.kh2patch KH2FM.NEW.ISO",
-                WorkingDirectory = launcherFolder,
+                WorkingDirectory = versionFolder,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -247,11 +287,11 @@ namespace KingdomLauncher {
 
             process.Dispose();
 
-            File.Delete(Path.Combine(launcherFolder, "English.Patch.kh2patch"));
-            File.Delete(Path.Combine(launcherFolder, "PCSX2.zip"));
-            File.Delete(Path.Combine(launcherFolder, "KH2FM.ISO"));
-            File.Delete(Path.Combine(launcherFolder, "mod.7z"));
-            File.Delete(Path.Combine(launcherFolder, "mod.kh2patch"));
+            File.Delete(Path.Combine(versionFolder, "English.Patch.kh2patch"));
+            File.Delete(Path.Combine(versionFolder, "PCSX2.7z"));
+            File.Delete(Path.Combine(versionFolder, "KH2FM.ISO"));
+            File.Delete(Path.Combine(versionFolder, "mod.7z"));
+            File.Delete(Path.Combine(versionFolder, "mod.kh2patch"));
 
             progressBar1.Style = ProgressBarStyle.Continuous;
 
@@ -264,7 +304,7 @@ namespace KingdomLauncher {
         }
 
         private void CreateDirectories() {
-            Directory.CreateDirectory(Path.Combine(launcherFolder));
+            Directory.CreateDirectory(Path.Combine(versionFolder));
         }
 
         private async Task DownloadFromURL(string url, string destination, IProgress<int> progress) {
@@ -310,18 +350,23 @@ namespace KingdomLauncher {
 
         private void btn_del_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Are you sure you want to uninstall DaysFM?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
-            Directory.Delete(launcherFolder, true);
+            Directory.Delete(versionFolder, true);
             DetectValidInstall();
 
         }
 
         private void btn_dir_Click(object sender, EventArgs e)
         {
-            Process.Start("explorer.exe", launcherFolder);
+            Process.Start("explorer.exe", versionFolder);
         }
 
         private void btn_help_Click(object sender, EventArgs e) {
             MessageBox.Show("Launcher created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ", "Help", MessageBoxButtons.OK);
+        }
+
+        private void box_version_Changed(object sender, EventArgs e) {
+            versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
+            DetectValidInstall();
         }
     }
 }
