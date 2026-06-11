@@ -35,6 +35,7 @@ namespace KingdomLauncher {
             this.box_version = new System.Windows.Forms.ComboBox();
             this.btn_del = new System.Windows.Forms.Button();
             this.btn_help = new System.Windows.Forms.Button();
+            this.label_loading = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -107,7 +108,7 @@ namespace KingdomLauncher {
             this.btn_dir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_dir.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_dir.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_dir.Location = new System.Drawing.Point(227, 176);
+            this.btn_dir.Location = new System.Drawing.Point(231, 176);
             this.btn_dir.Name = "btn_dir";
             this.btn_dir.Size = new System.Drawing.Size(23, 23);
             this.btn_dir.TabIndex = 6;
@@ -121,9 +122,9 @@ namespace KingdomLauncher {
             this.box_version.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.box_version.FormattingEnabled = true;
             this.box_version.ItemHeight = 13;
-            this.box_version.Location = new System.Drawing.Point(137, 177);
+            this.box_version.Location = new System.Drawing.Point(132, 177);
             this.box_version.Name = "box_version";
-            this.box_version.Size = new System.Drawing.Size(87, 21);
+            this.box_version.Size = new System.Drawing.Size(97, 21);
             this.box_version.TabIndex = 7;
             this.box_version.Visible = false;
             this.box_version.SelectedIndexChanged += new System.EventHandler(this.box_version_Changed);
@@ -137,7 +138,7 @@ namespace KingdomLauncher {
             this.btn_del.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_del.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_del.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_del.Location = new System.Drawing.Point(110, 176);
+            this.btn_del.Location = new System.Drawing.Point(107, 176);
             this.btn_del.Name = "btn_del";
             this.btn_del.Size = new System.Drawing.Size(23, 23);
             this.btn_del.TabIndex = 6;
@@ -163,6 +164,18 @@ namespace KingdomLauncher {
             this.btn_help.UseVisualStyleBackColor = false;
             this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
             // 
+            // label_loading
+            // 
+            this.label_loading.AutoSize = true;
+            this.label_loading.BackColor = System.Drawing.Color.Transparent;
+            this.label_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_loading.ForeColor = System.Drawing.Color.White;
+            this.label_loading.Location = new System.Drawing.Point(127, 156);
+            this.label_loading.Name = "label_loading";
+            this.label_loading.Size = new System.Drawing.Size(107, 25);
+            this.label_loading.TabIndex = 8;
+            this.label_loading.Text = "Loading...";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -170,6 +183,7 @@ namespace KingdomLauncher {
             this.BackgroundImage = global::KingdomLauncher.Properties.Resources.BackgroundImage;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(349, 214);
+            this.Controls.Add(this.label_loading);
             this.Controls.Add(this.box_version);
             this.Controls.Add(this.btn_del);
             this.Controls.Add(this.btn_help);
@@ -186,6 +200,7 @@ namespace KingdomLauncher {
             this.Text = "KingdomLauncher";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -198,6 +213,7 @@ namespace KingdomLauncher {
         private Button btn_del;
         private ComboBox box_version;
         private Button btn_help;
+        private Label label_loading;
     }
 }
 

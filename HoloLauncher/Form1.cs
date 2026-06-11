@@ -20,6 +20,7 @@ using System.Windows.Forms;
 namespace KingdomLauncher {
     public partial class Form1: Form {
 
+        string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string launcherFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher");
         string versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", "HoloDemo1");
 
@@ -105,7 +106,7 @@ namespace KingdomLauncher {
                         box_version.Items.Add(version);
                     }
                 }
-                box_version.SelectedIndex = 0;
+                box_version.SelectedIndex = (box_version.Items.Count - 1);
                 Debug.WriteLine(box_version.SelectedItem.ToString());
                 versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
             } catch (Exception ex) {
@@ -138,6 +139,7 @@ namespace KingdomLauncher {
             progressBar1.Visible = false;
             btn_InstallPlay.Visible = true;
             box_version.Visible = true;
+            label_loading.Visible = false;
 
             if (Directory.Exists(Path.Combine(versionFolder))) {
                 btn_del.Visible = true;
@@ -245,7 +247,7 @@ namespace KingdomLauncher {
 
             await DownloadFromURL("https://github.com/DaRealLando123/KingdomLauncher/releases/download/Tools/English.Patch.kh2patch", Path.Combine(versionFolder, "English.Patch.kh2patch"), progress);
 
-            label1.Text = "Extracting (1/2) PCSX2... (This is slow!)";
+            label1.Text = "Extracting PCSX2... (This is slow!)";
 
             progressBar1.Style = ProgressBarStyle.Marquee;
 
@@ -253,7 +255,7 @@ namespace KingdomLauncher {
 
             // HERE
 
-            label1.Text = "Extracting (2/2) DaysFM... (This is slow!)";
+            label1.Text = "Extracting DaysFM... (This is slow!)";
 
             await extractTask1;
 
@@ -282,11 +284,14 @@ namespace KingdomLauncher {
             });
 
             process.WaitForExit();
+
             await Task.WhenAll(stdoutTask, stderrTask);
 
             Debug.WriteLine("Process finished with code " + process.ExitCode);
 
             process.Dispose();
+
+            label1.Text = "Cleaning up...";
 
             File.Delete(Path.Combine(versionFolder, "English.Patch.kh2patch"));
             File.Delete(Path.Combine(versionFolder, "PCSX2.7z"));
@@ -350,7 +355,7 @@ namespace KingdomLauncher {
         }
 
         private void btn_del_Click(object sender, EventArgs e) {
-            if (MessageBox.Show("Are you sure you want to uninstall DaysFM?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
+            if (MessageBox.Show("Are you sure you want to uninstall DaysFM "+box_version.SelectedItem.ToString()+"?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
             Directory.Delete(versionFolder, true);
             DetectValidInstall();
 
