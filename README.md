@@ -13,6 +13,7 @@ KingdomLauncher supports Windows 7, 10, and 11
 ## Ok... But what can it do?
 
 - [x] 358/2 Days Final Mix by O’Shinobi ツ Direct Mod Integration
+- [x] Version Selection and Save Seperation
 - [x] Optimized Mod-Specific Configurations
 - [x] Automated Patching with Toolkit
 - [x] QOL Options (English Patches, Widescreen Patches, FPS Patches)
