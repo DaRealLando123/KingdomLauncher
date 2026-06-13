@@ -223,6 +223,7 @@ namespace KingdomLauncher {
             progressBar1.Visible = true;
             btn_InstallPlay.Visible = false;
             box_version.Visible = false;
+            label_warning.Visible = false;
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "ISO files (*.iso)|*.iso";
@@ -424,7 +425,7 @@ namespace KingdomLauncher {
         }
 
         private void btn_help_Click(object sender, EventArgs e) {
-            MessageBox.Show("Created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ\n\nOpen-sourced on GitHub:\nhttps://github.com/DaRealLando123/KingdomLauncher\n\nLatest Update:\n+ Added Version Selector\nChanged file directories to function with multiple game versions. Old versions will require a reinstall!\n+ Improved Launcher UI\nReplaced old textures with higher fidelity ones and and revised layout of elements.\n+ Lowered Install File Size Footprint\nSwapped to 7zip as the compressor.", "KingdomLauncher v2.1", MessageBoxButtons.OK);
+            MessageBox.Show("Created by DaRealLando123 with help from zpitolava22350\r\n358 / 2 Days Final Mix created by O’Shinobi ツ\n\nOpen-sourced on GitHub:\nhttps://github.com/DaRealLando123/KingdomLauncher", "KingdomLauncher v2.2", MessageBoxButtons.OK);
         }
 
         private void box_version_Changed(object sender, EventArgs e) {
