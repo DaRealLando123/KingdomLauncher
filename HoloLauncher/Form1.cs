@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -91,31 +92,53 @@ namespace KingdomLauncher {
 
         private async Task FetchVersions() {
             box_version.Items.Clear();
-
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.ParseAdd("KingdomLauncher");
 
+            List<string> versionList = new List<string>();
+
             try {
                 string jsonResponse = await client.GetStringAsync("https://api.github.com/repos/DaRealLando123/DaysFMMirror/releases");
+                Debug.WriteLine(jsonResponse);
                 JsonDocument docs = JsonDocument.Parse(jsonResponse);
 
                 foreach (JsonElement release in docs.RootElement.EnumerateArray()) {
                     if (release.TryGetProperty("tag_name", out JsonElement tagElement)) {
                         string version = tagElement.GetString();
+                        versionList.Add(version);
+                    }
+                }
 
+                versionList = SortVersions(versionList);
+
+                foreach (var version in versionList) {
+                    string checkPath = Path.Combine(launcherFolder, version, "KH2FM.NEW.ISO");
+                    if (File.Exists(checkPath)) {
+                        box_version.Items.Add($"{version} (Installed)");
+                    } else {
                         box_version.Items.Add(version);
                     }
                 }
-                box_version.SelectedIndex = (box_version.Items.Count - 1);
-                Debug.WriteLine(box_version.SelectedItem.ToString());
-                versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
+
+                SetSavedOrLatestVersion();
+
             } catch (Exception ex) {
                 string[] folders = Directory.GetDirectories(launcherFolder);
 
                 foreach (string folderPath in folders) {
                     string folderName = Path.GetFileName(folderPath);
+                    versionList.Add(folderName);
+                }
 
-                    box_version.Items.Add(folderName);
+                versionList = SortVersions(versionList);
+
+                foreach (var version in versionList) {
+                    string checkPath = Path.Combine(launcherFolder, version, "KH2FM.NEW.ISO");
+                    if (File.Exists(checkPath)) {
+                        box_version.Items.Add($"{version} (Installed)");
+                    } else {
+                        box_version.Items.Add(version);
+                    }
                 }
 
                 if (box_version.Items.Count <= 0) {
@@ -123,13 +146,48 @@ namespace KingdomLauncher {
                     this.Close();
                 } else {
                     MessageBox.Show("Couldn't load the online version list.\nIt could be that your internet or GitHub is down.\n\nOnly currently installed versions will be shown.", "Error loading version list", MessageBoxButtons.OK);
-                    box_version.SelectedIndex = 0;
+                    SetSavedOrLatestVersion();
                 }
             }
             DetectValidInstall();
         }
+        private List<string> SortVersions(List<string> versions) {
+            return versions.OrderBy(v => v, new NaturalStringComparer()).ToList();
+        }
+
+        public class NaturalStringComparer : IComparer<string> {
+            public int Compare(string x, string y) {
+                if (x == y) return 0;
+                if (x == null) return -1;
+                if (y == null) return 1;
+
+                string[] xChunks = Regex.Split(x.TrimStart('v', 'V'), "([0-9]+)");
+                string[] yChunks = Regex.Split(y.TrimStart('v', 'V'), "([0-9]+)");
+
+                int minLength = Math.Min(xChunks.Length, yChunks.Length);
+
+                for (int i = 0; i < minLength; i++) {
+                    if (xChunks[i] != yChunks[i]) {
+                        if (int.TryParse(xChunks[i], out int xNum) && int.TryParse(yChunks[i], out int yNum)) {
+                            if (xNum != yNum)
+                                return xNum.CompareTo(yNum);
+                        } else {
+                            return string.Compare(xChunks[i], yChunks[i], StringComparison.OrdinalIgnoreCase);
+                        }
+                    }
+                }
+
+                return xChunks.Length.CompareTo(yChunks.Length);
+            }
+        }
+
 
         private void DetectValidInstall() {
+            if (box_version.SelectedIndex < box_version.Items.Count - 1) {
+                label_warning.Show();
+            } else {
+                label_warning.Hide();
+            }
             if (File.Exists(Path.Combine(versionFolder, "KH2FM.NEW.ISO")) && Directory.Exists(Path.Combine(versionFolder, "PCSX2"))) {
                 btn_InstallPlay.Text = "Play";
             } else {
@@ -202,7 +260,7 @@ namespace KingdomLauncher {
 
             label1.Text = "Downloading (1/4) DaysFM...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/"+ box_version.SelectedItem.ToString() + "/mod.7z", Path.Combine(versionFolder, "mod.7z"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/"+ GetRawSelectedVersion() + "/mod.7z", Path.Combine(versionFolder, "mod.7z"), progress);
 
             Task extractTask1 = Task.Run(() =>
             {
@@ -221,7 +279,7 @@ namespace KingdomLauncher {
 
             label1.Text = "Downloading (2/4) PCSX2...";
 
-            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/" + box_version.SelectedItem.ToString() + "/PCSX2.7z", Path.Combine(versionFolder, "PCSX2.7z"), progress);
+            await DownloadFromURL("https://github.com/DaRealLando123/DaysFMMirror/releases/download/" + GetRawSelectedVersion() + "/PCSX2.7z", Path.Combine(versionFolder, "PCSX2.7z"), progress);
 
             Task extractTask2 = Task.Run(() =>
             {
@@ -305,7 +363,7 @@ namespace KingdomLauncher {
 
             progressBar1.Value = 0;
 
-            DetectValidInstall();
+            await FetchVersions();
 
         }
 
@@ -355,10 +413,9 @@ namespace KingdomLauncher {
         }
 
         private void btn_del_Click(object sender, EventArgs e) {
-            if (MessageBox.Show("Are you sure you want to uninstall DaysFM "+box_version.SelectedItem.ToString()+"?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
+            if (MessageBox.Show("Are you sure you want to uninstall DaysFM "+GetRawSelectedVersion()+"?","Confirm",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.No) return;
             Directory.Delete(versionFolder, true);
-            DetectValidInstall();
-
+            FetchVersions();
         }
 
         private void btn_dir_Click(object sender, EventArgs e)
@@ -371,8 +428,58 @@ namespace KingdomLauncher {
         }
 
         private void box_version_Changed(object sender, EventArgs e) {
-            versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", box_version.SelectedItem.ToString());
+            if (box_version.SelectedItem == null) return;
+
+            string selectedVersion = GetRawSelectedVersion();
+            versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", selectedVersion);
+
+            SaveLastUsedVersion(selectedVersion);
             DetectValidInstall();
         }
+
+        private string GetRawSelectedVersion() {
+            if (box_version.SelectedItem == null) return string.Empty;
+
+            return (box_version.SelectedItem.ToString().Replace(" (Installed)", "").Trim());
+        }
+
+        private void SetSavedOrLatestVersion() {
+            if (box_version.Items.Count > 0) {
+                string savedVersion = LoadLastUsedVersion();
+
+                if (!string.IsNullOrEmpty(savedVersion) && box_version.Items.Contains(savedVersion)) {
+                    box_version.SelectedItem = savedVersion;
+                } else {
+                    box_version.SelectedIndex = (box_version.Items.Count - 1);
+                }
+
+                versionFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "KingdomLauncher", GetRawSelectedVersion());
+            }
+        }
+
+        private void SaveLastUsedVersion(string version) {
+            try {
+                if (!Directory.Exists(launcherFolder)) {
+                    Directory.CreateDirectory(launcherFolder);
+                }
+                string configPath = Path.Combine(launcherFolder, "last_version.txt");
+                File.WriteAllText(configPath, version.Trim());
+            } catch (Exception ex) {
+                Debug.WriteLine("Failed to save last version configuration: " + ex.Message);
+            }
+        }
+
+        private string LoadLastUsedVersion() {
+            try {
+                string configPath = Path.Combine(launcherFolder, "last_version.txt");
+                if (File.Exists(configPath)) {
+                    return File.ReadAllText(configPath).Trim();
+                }
+            } catch (Exception ex) {
+                Debug.WriteLine("Failed to load last version configuration: " + ex.Message);
+            }
+            return string.Empty;
+        }
     }
+
 }

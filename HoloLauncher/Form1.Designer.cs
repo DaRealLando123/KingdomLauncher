@@ -36,6 +36,7 @@ namespace KingdomLauncher {
             this.btn_del = new System.Windows.Forms.Button();
             this.btn_help = new System.Windows.Forms.Button();
             this.label_loading = new System.Windows.Forms.Label();
+            this.label_warning = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,7 +89,7 @@ namespace KingdomLauncher {
             this.btn_InstallPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_InstallPlay.Font = new System.Drawing.Font("Palatino Linotype", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_InstallPlay.ForeColor = System.Drawing.Color.White;
-            this.btn_InstallPlay.Location = new System.Drawing.Point(105, 138);
+            this.btn_InstallPlay.Location = new System.Drawing.Point(105, 134);
             this.btn_InstallPlay.Name = "btn_InstallPlay";
             this.btn_InstallPlay.Size = new System.Drawing.Size(151, 37);
             this.btn_InstallPlay.TabIndex = 0;
@@ -108,7 +109,7 @@ namespace KingdomLauncher {
             this.btn_dir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_dir.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_dir.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_dir.Location = new System.Drawing.Point(231, 176);
+            this.btn_dir.Location = new System.Drawing.Point(239, 171);
             this.btn_dir.Name = "btn_dir";
             this.btn_dir.Size = new System.Drawing.Size(23, 23);
             this.btn_dir.TabIndex = 6;
@@ -122,9 +123,9 @@ namespace KingdomLauncher {
             this.box_version.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.box_version.FormattingEnabled = true;
             this.box_version.ItemHeight = 13;
-            this.box_version.Location = new System.Drawing.Point(132, 177);
+            this.box_version.Location = new System.Drawing.Point(125, 173);
             this.box_version.Name = "box_version";
-            this.box_version.Size = new System.Drawing.Size(97, 21);
+            this.box_version.Size = new System.Drawing.Size(111, 21);
             this.box_version.TabIndex = 7;
             this.box_version.Visible = false;
             this.box_version.SelectedIndexChanged += new System.EventHandler(this.box_version_Changed);
@@ -138,7 +139,7 @@ namespace KingdomLauncher {
             this.btn_del.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_del.Font = new System.Drawing.Font("Palatino Linotype", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_del.ForeColor = System.Drawing.SystemColors.Control;
-            this.btn_del.Location = new System.Drawing.Point(107, 176);
+            this.btn_del.Location = new System.Drawing.Point(98, 171);
             this.btn_del.Name = "btn_del";
             this.btn_del.Size = new System.Drawing.Size(23, 23);
             this.btn_del.TabIndex = 6;
@@ -170,11 +171,24 @@ namespace KingdomLauncher {
             this.label_loading.BackColor = System.Drawing.Color.Transparent;
             this.label_loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label_loading.ForeColor = System.Drawing.Color.White;
-            this.label_loading.Location = new System.Drawing.Point(127, 156);
+            this.label_loading.Location = new System.Drawing.Point(125, 152);
             this.label_loading.Name = "label_loading";
             this.label_loading.Size = new System.Drawing.Size(107, 25);
             this.label_loading.TabIndex = 8;
             this.label_loading.Text = "Loading...";
+            // 
+            // label_warning
+            // 
+            this.label_warning.AutoSize = true;
+            this.label_warning.BackColor = System.Drawing.Color.Transparent;
+            this.label_warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_warning.ForeColor = System.Drawing.Color.OrangeRed;
+            this.label_warning.Location = new System.Drawing.Point(93, 195);
+            this.label_warning.Name = "label_warning";
+            this.label_warning.Size = new System.Drawing.Size(173, 16);
+            this.label_warning.TabIndex = 8;
+            this.label_warning.Text = "This is not the latest version!";
+            this.label_warning.Visible = false;
             // 
             // Form1
             // 
@@ -183,6 +197,7 @@ namespace KingdomLauncher {
             this.BackgroundImage = global::KingdomLauncher.Properties.Resources.BackgroundImage;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(349, 214);
+            this.Controls.Add(this.label_warning);
             this.Controls.Add(this.label_loading);
             this.Controls.Add(this.box_version);
             this.Controls.Add(this.btn_del);
@@ -214,6 +229,7 @@ namespace KingdomLauncher {
         private ComboBox box_version;
         private Button btn_help;
         private Label label_loading;
+        private Label label_warning;
     }
 }
 
