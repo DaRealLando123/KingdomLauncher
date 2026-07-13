@@ -8,8 +8,8 @@ A Kingdom Hearts II manager for the 358/2 Days | Final Mix mod that allows autom
 
 KingdomLauncher supports Windows 7, 10, and 11
 
-![](https://github.com/DaRealLando123/KingdomLauncher/blob/5f361a9722c5995891bdc0f6cb0a871643389223/Resources/display3.png)
-
+![KingdomLauncher v2](https://github.com/DaRealLando123/KingdomLauncher/blob/972453ddf180f8e832c6c0b6a1528ee1e7d22fdb/Resources/display4.png)
+![KingdomLauncherLegacy](https://github.com/DaRealLando123/KingdomLauncher/blob/5f361a9722c5995891bdc0f6cb0a871643389223/Resources/display3.png)
 ## Ok... But what can it do?
 
 - [x] 358/2 Days Final Mix by O’Shinobi ツ Direct Mod Integration
