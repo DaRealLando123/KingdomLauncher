@@ -23,6 +23,8 @@ KingdomLauncher supports Windows 7, 10, and 11
 
 ## KingdomLauncher does NOT include a Kingdom Hearts 2 | Final-Mix iso (ROM) or a Playstation 2 BIOS (firmware), and does not include any links or resources to find/access them! You must have your own legally obtained copies.
 
+## KingdomLauncher is not responsible for any issues that arrise while playing (i.e corrupted/lost save files, game not working, launcher bugs, etc.)
+
 |  | Credit |
 | ---------- | ----------- |
 | 358/2 Days • Final Mix | O’Shinobi ツ |
