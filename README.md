@@ -1,4 +1,4 @@
-## KingdomLauncher recently underwent a re-write; The new source code will be avaliable in the coming verions.
+## KingdomLauncher recently underwent a re-write, and this repository is being worked on! Please be patient! (I'm still learning my way around GitHub.)
 
 ### _"And out of all those colors, red is the one that travels the farthest."_
 ![](https://github.com/DaRealLando123/KingdomLauncher/blob/979e02040acc0b23bff3a7566b54451a0709195f/Resources/logo.png)
