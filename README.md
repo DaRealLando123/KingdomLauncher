@@ -13,15 +13,15 @@ KingdomLauncher supports Windows 7, 10, and 11
 ## Ok... But what can it do?
 
 - [x] 358/2 Days Final Mix by O’Shinobi ツ Direct Mod Integration
-- [x] Version Selection and Save Seperation
 - [x] Optimized Mod-Specific Configurations
 - [x] Automated Patching with Toolkit
 - [x] QOL Options (English Patches, Widescreen Patches, FPS Patches)
 - [x] Minimal Configuration (Xbox Controllers and Playstation Controllers are set-up by Default)
+- [LL] Version Selection and Save Seperation
 - [ ] Easy Quality Options (Including resolution, AA, and other options from PCSX2)
 - [ ] Easy Control Options (Other controllers)
 
-## KingdomLauncher does NOT include a Kingdom Hearts 2 | Final-Mix ROM or a Playstation 2 BIOS, and does not include any links or resources to find/access them! You must have your own legally obtained copies.
+## KingdomLauncher does NOT include a Kingdom Hearts 2 | Final-Mix iso (ROM) or a Playstation 2 BIOS (firmware), and does not include any links or resources to find/access them! You must have your own legally obtained copies.
 
 |  | Credit |
 | ---------- | ----------- |
@@ -30,3 +30,5 @@ KingdomLauncher supports Windows 7, 10, and 11
 | KingdomLauncher | zpitolava22350 |
 | PCSX2 | PCSX2 Team |
 | English Patch | Crazycatz00 |
+| KH2FM Toolkit | GovanifY |
+| 7-zip | https://7-zip.org/ |
